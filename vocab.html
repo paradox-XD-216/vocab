@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机术语英语词库</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 头部 */
+        .header {
+            background: white;
+            padding: 16px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        
+        .stats {
+            color: #64748b;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        /* 分类标签栏 */
+        .tabs {
+            background: white;
+            padding: 12px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .tab {
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background: #e2e8f0;
+        }
+        
+        .tab.active {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .tab.favorite {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        
+        .tab.favorite.active {
+            background: #facc15;
+            color: #1e293b;
+        }
+        
+        .clear-btn {
+            margin-left: auto;
+            padding: 6px 12px;
+            background: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .clear-btn:hover {
+            background: #f1f5f9;
+        }
+        
+        /* 主内容区 - 两列布局 */
+        .main {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        /* 左侧分类列表 */
+        .category-sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+        
+        .category-header {
+            padding: 8px 20px;
+            color: #64748b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .category-item {
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .category-item:hover {
+            background: #f8fafc;
+        }
+        
+        .category-item.active {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+        
+        .category-item.active .category-name {
+            color: #1e40af;
+            font-weight: 500;
+        }
+        
+        .category-name {
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .category-icon {
+            font-size: 1.1rem;
+        }
+        
+        .category-count {
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #475569;
+            font-weight: 500;
+        }
+        
+        .category-item.active .category-count {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        /* 右侧单词列表 */
+        .word-list {
+            flex: 1;
+            background: #f8fafc;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .word-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        
+        .word-item:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
+        }
+        
+        .word-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .word-term {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .term-main {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        .term-translation {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+        
+        .word-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .category-tag {
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+        
+        .expand-icon {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* 展开后的详情 */
+        .word-detail {
+            padding: 0 20px 20px 20px;
+        }
+        
+        .explanation-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .explanation-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .explanation-text {
+            color: #1e293b;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .word-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .action-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #475569;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        
+        .action-btn.favorite {
+            background: #fef9c3;
+            border-color: #facc15;
+            color: #854d0e;
+        }
+        
+        .action-btn.favorite:hover {
+            background: #fef08a;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #94a3b8;
+            padding: 60px 20px;
+            font-size: 1.1rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px dashed #e2e8f0;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            color: #64748b;
+            padding: 40px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            .category-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                max-height: 150px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>📚 计算机术语</span>
+            <span class="stats" id="stats">加载中...</span>
+        </h1>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索术语、翻译或解释..." oninput="handleSearch()">
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="filterByFavorite(false)">📋 全部单词</button>
+        <button class="tab favorite" onclick="filterByFavorite(true)" id="favoriteTab">⭐ 我的收藏</button>
+        <button class="clear-btn" onclick="clearSearch()" id="clearBtn" style="display: none;">✕ 清除搜索</button>
+    </div>
+
+    <div class="main">
+        <!-- 左侧领域分类 -->
+        <div class="category-sidebar" id="categoryList">
+            <div class="category-header">📌 分类</div>
+            <!-- 分类会动态生成 -->
+        </div>
+        
+        <!-- 右侧单词列表 -->
+        <div class="word-list" id="wordList">
+            <div class="loading">加载词库中...</div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 词库数据 ====================
+        // TODO: 从这里开始，把你的CSV数据转换成这个格式
+        const words = [
+            { term: "Abstract Factory Pattern", translation: "抽象工厂模式", explanation: "一种创建型设计模式，提供一个接口用于创建一系列相关或依赖的对象，而无需指定它们的具体类。", category: "设计模式", favorite: false },
+ { term: "abstraction layer", translation: "抽象层", explanation: "在软件架构中，通过隐藏底层复杂实现细节，为上层提供统一、简化接口的软件层。", category: "软件工程", favorite: false },
+ { term: "access", translation: "获取，存取", explanation: "在计算机系统中，指对数据、文件或资源进行读取、写入或使用的操作行为。", category: "计算机基础", favorite: false },
+ { term: "access modifier", translation: "访问修饰符", explanation: "在面向对象编程中，用于限定类、方法或变量可访问范围的关键字，如public、private、protected。", category: "编程语言", favorite: false },
+ { term: "acoustic coupler", translation: "声音耦合器", explanation: "一种早期的调制解调器设备，通过将电话听筒放置在声学耦合器上，利用声音信号在电话线上传输数字数据。", category: "硬件架构", favorite: false },
+ { term: "Active Directory", translation: "活动目录", explanation: "由微软开发的目录服务，用于Windows域网络，集中管理用户、计算机、权限等网络资源信息。", category: "操作系统", favorite: false },
+ { term: "Acyclic Dependencies Principle", translation: "非循环依赖原则（ADP）", explanation: "软件设计原则，指在包或模块的依赖关系中，不应出现循环依赖，以保持架构的稳定性和可维护性。", category: "软件工程", favorite: false },
+ { term: "acyclic digraph", translation: "有向无环图", explanation: "一种图论中的数据结构，由顶点和有向边组成，且图中不存在任何从一个顶点出发经过若干边后回到该顶点的环路。", category: "数据结构", favorite: false },
+ { term: "Adapter", translation: "适配器", explanation: "在软件中，指一个使两个不兼容接口能够协同工作的组件或对象，通常用于集成旧系统或第三方库。", category: "软件工程", favorite: false },
+ { term: "Adapter Pattern", translation: "适配器模式", explanation: "一种结构型设计模式，通过将一个类的接口转换成客户端期望的另一个接口，使原本接口不兼容的类可以一起工作。", category: "设计模式", favorite: false },
+ { term: "Adaptive Code", translation: "自适应代码", explanation: "自适应代码是指能够根据运行时环境或需求变化自动调整行为的代码，常用于提高系统的灵活性和性能。", category: "软件工程", favorite: false },
+ { term: "Add Parameter", translation: "添加参数", explanation: "添加参数是指在函数或方法中增加新的输入参数，以扩展其功能或适应新的需求，是代码重构的常见操作。", category: "编程语言", favorite: false },
+ { term: "ADSL", translation: "Asymmetrical Dingital Subscriber Loop，非对称数字用户环线", explanation: "ADSL是一种通过电话线提供高速互联网接入的技术，上行和下行带宽不对称，适合家庭用户浏览网页和下载。", category: "计算机网络", favorite: false },
+ { term: "affinity", translation: "绑定", explanation: "绑定通常指在计算中将两个或多个实体关联起来，例如进程与CPU核心的绑定以提高性能，或网络中的资源关联。", category: "操作系统", favorite: false },
+ { term: "affinity group", translation: "地缘组", explanation: "地缘组是云计算中的概念，指将相关资源（如虚拟机）放置在物理上接近的数据中心，以减少延迟并提高效率。", category: "云计算", favorite: false },
+ { term: "agent", translation: "代理", explanation: "代理是指在计算机系统中代表用户或其他程序执行任务的软件实体，常用于自动化、监控或网络通信中。", category: "计算机基础", favorite: false },
+ { term: "agent-based interface", translation: "代理人界面", explanation: "代理人界面是一种用户界面，通过代理程序与用户交互，模拟人类行为以简化操作，常见于智能系统或辅助工具。", category: "人工智能", favorite: false },
+ { term: "Aggregate", translation: "聚合", explanation: "聚合是领域驱动设计中的概念，指将多个相关对象组合成一个整体单元，确保数据一致性和业务规则执行。", category: "设计模式", favorite: false },
+ { term: "Aggregate Root", translation: "聚合根", explanation: "聚合根是聚合中的主要实体，负责管理聚合内部对象，并作为外部访问聚合的唯一入口，确保业务逻辑完整性。", category: "设计模式", favorite: false },
+ { term: "Agile", translation: "敏捷方法论", explanation: "敏捷方法论是一种迭代和增量的软件开发方法，强调团队协作、客户反馈和快速响应变化，以提高项目成功率。", category: "项目管理", favorite: false },
+ { term: "agile practice", translation: "敏捷实践", explanation: "敏捷实践是软件开发中采用的一系列方法和技巧，强调快速迭代、持续反馈和团队协作，以提高项目响应变化的能力。", category: "软件工程", favorite: false },
+ { term: "agile process", translation: "敏捷流程", explanation: "敏捷流程是一种软件开发流程，通过短周期迭代、频繁交付和客户合作来管理项目，以应对需求变化并提高效率。", category: "软件工程", favorite: false },
+ { term: "agility", translation: "敏捷性", explanation: "敏捷性指组织或团队快速适应变化、高效交付价值的能力，在软件开发中体现为灵活响应需求调整和持续改进。", category: "软件工程", favorite: false },
+ { term: "AI", translation: "Artificial Intelligence，人工智能", explanation: "人工智能是计算机科学的一个分支，旨在创建能够模拟人类智能行为的系统，如学习、推理和问题解决。", category: "人工智能", favorite: false },
+ { term: "air waves", translation: "无线电波", explanation: "无线电波是电磁波的一种，用于无线通信中传输数据，如Wi-Fi、蓝牙和移动网络信号，通过空气传播。", category: "计算机网络", favorite: false },
+ { term: "algorithm", translation: "算法", explanation: "算法是解决特定问题或执行任务的一系列明确步骤或规则，在计算机中用于数据处理和计算。", category: "算法", favorite: false },
+ { term: "Algorithm-of-Thought", translation: "思维算法（AoT）", explanation: "思维算法是一种人工智能方法，模拟人类思维过程来解决问题，通过结构化步骤提升推理和决策能力。", category: "人工智能", favorite: false },
+ { term: "analog", translation: "模拟的", explanation: "模拟的指连续变化的信号或数据，与数字信号相对，常用于传统电子设备如模拟电路和音频传输。", category: "硬件架构", favorite: false },
+ { term: "animation", translation: "动画", explanation: "动画是通过快速连续显示静态图像来创建运动效果的技术，在计算机中用于游戏、网页和多媒体应用。", category: "前端开发", favorite: false },
+ { term: "annotation", translation: "注解，注释", explanation: "注解是添加到代码中的元数据，用于提供额外信息或指示编译器、框架如何处理代码，常见于Java和Python。", category: "编程语言", favorite: false },
+ { term: "answering machine", translation: "电话应答机", explanation: "电话应答机是一种电子设备，能自动接听电话并播放预设的问候语，然后记录来电者的留言。", category: "其他", favorite: false },
+ { term: "antenna", translation: "天线", explanation: "天线是一种用于发送或接收无线电波的设备，常见于无线通信系统如Wi-Fi、手机和广播中。", category: "硬件架构", favorite: false },
+ { term: "anti-pattern", translation: "反模式", explanation: "反模式是指在软件开发中常见但效果不佳的解决方案或实践，可能导致代码难以维护或性能问题。", category: "软件工程", favorite: false },
+ { term: "AoT", translation: "思维算法（Algorithm-of-Thought）", explanation: "思维算法是一种人工智能方法，通过模拟人类思维过程来解决问题，通常用于增强模型的推理能力。", category: "人工智能", favorite: false },
+ { term: "APM", translation: "异步编程模型（Asynchronous Programming Model）", explanation: "异步编程模型是一种编程方式，允许程序在等待操作完成时继续执行其他任务，提高效率和响应性。", category: "编程语言", favorite: false },
+ { term: "Apocalyptic defect", translation: "灾难缺陷", explanation: "灾难缺陷是指软件中极其严重的错误，可能导致系统崩溃、数据丢失或安全漏洞，需要紧急修复。", category: "软件工程", favorite: false },
+ { term: "application", translation: "应用，应用程序，应用软件", explanation: "应用（或应用程序）是设计用于执行特定任务的软件程序，如文字处理、游戏或网页浏览。", category: "计算机基础", favorite: false },
+ { term: "application life cycle", translation: "应用程序生命周期", explanation: "应用程序生命周期指从设计、开发、测试、部署到维护和最终退役的整个软件过程。", category: "软件工程", favorite: false },
+ { term: "application pool", translation: "应用程序池", explanation: "应用程序池是Web服务器中的一个隔离环境，用于托管和管理多个Web应用，提高稳定性和性能。", category: "后端开发", favorite: false },
+ { term: "Application Programming Interface", translation: "应用程序编程接口（API）", explanation: "应用程序编程接口是一组规则和工具，允许不同软件组件相互通信和交互，简化开发过程。", category: "软件工程", favorite: false },
+ { term: "Application Service", translation: "应用服务", explanation: "应用服务是软件架构中的业务逻辑层，负责处理具体的业务操作和流程，通常作为前后端之间的桥梁。", category: "软件工程", favorite: false },
+ { term: "arbitrary error", translation: "任意错误", explanation: "任意错误指在计算机系统中，由于不可预测或随机因素导致的错误，难以通过常规测试复现和调试。", category: "计算机基础", favorite: false },
+ { term: "architecture", translation: "体系机构，结构", explanation: "体系结构指软件或硬件系统的整体结构和设计，包括组件、关系、原则和约束，以确保系统高效可靠。", category: "软件工程", favorite: false },
+ { term: "architecture decay", translation: "架构腐坏", explanation: "架构腐坏指软件架构随时间推移逐渐偏离原始设计，导致系统难以维护、扩展和演化的现象。", category: "软件工程", favorite: false },
+ { term: "Architecture Style", translation: "架构风格", explanation: "架构风格是软件架构的高层模式，如微服务或分层架构，定义了系统组件的组织和交互方式。", category: "软件工程", favorite: false },
+ { term: "ARPA", translation: "Advanced Research Projects Agency，（美国国防部）高级研究计划署", explanation: "ARPA是美国国防部高级研究计划署，负责资助前沿科技研究，对互联网等技术的发展有重要影响。", category: "计算机网络", favorite: false },
+ { term: "ARPAnet", translation: "ARPA 网", explanation: "ARPAnet是ARPA资助的早期计算机网络，被视为互联网的前身，首次实现了分组交换技术。", category: "计算机网络", favorite: false },
+ { term: "Arrange-Act-Assert", translation: "准备-执行-断言（AAA）", explanation: "准备-执行-断言是单元测试的常用模式，先设置测试环境，再执行操作，最后验证结果是否符合预期。", category: "测试", favorite: false },
+ { term: "artifact", translation: "构建物", explanation: "构建物是软件开发过程中产生的输出文件，如可执行程序、库或文档，用于部署或分发。", category: "软件工程", favorite: false },
+ { term: "ASF", translation: "Apache Software Foundation 的简写", explanation: "ASF是Apache软件基金会，一个非营利组织，支持开源软件项目的开发，如Apache HTTP服务器。", category: "开发工具", favorite: false },
+ { term: "Aspect-Oriented Programming", translation: "面向切面编程（AOP）", explanation: "一种编程范式，通过将横切关注点（如日志、事务）模块化，提高代码的模块性和可维护性。", category: "软件工程", favorite: false },
+ { term: "aspect ratio", translation: "屏幕高宽比", explanation: "屏幕或图像的宽度与高度之间的比例，常见如16:9或4:3，影响显示效果和兼容性。", category: "计算机基础", favorite: false },
+ { term: "assembly", translation: "程序集", explanation: "在.NET中，指编译后的代码单元，包含可执行代码、元数据和资源，用于部署和版本控制。", category: "编程语言", favorite: false },
+ { term: "associative array", translation: "关联数组", explanation: "一种数据结构，使用键值对存储数据，允许通过唯一键快速访问值，如字典或哈希表。", category: "数据结构", favorite: false },
+ { term: "Asynchronous Programming Model", translation: "异步编程模型（APM）", explanation: "一种编程模型，允许程序在等待耗时操作（如I/O）时继续执行其他任务，提高响应性和效率。", category: "编程语言", favorite: false },
+ { term: "ATM", translation: "asynchronous transfer mode，异步传输模式", explanation: "一种网络通信技术，使用固定大小的信元传输数据，支持高速、异步的多媒体数据传输。", category: "计算机网络", favorite: false },
+ { term: "atomic operation", translation: "原子操作", explanation: "指在多线程或并发环境中不可分割的操作，要么完全执行，要么完全不执行，避免数据竞争。", category: "计算机基础", favorite: false },
+ { term: "atomic transaction", translation: "原子事务", explanation: "数据库中的一组操作，作为一个不可分割的单元执行，要么全部成功，要么全部回滚。", category: "数据库", favorite: false },
+ { term: "atomicity", translation: "原子性", explanation: "事务的ACID属性之一，确保事务中的所有操作要么全部完成，要么全部不执行。", category: "数据库", favorite: false },
+ { term: "attribute", translation: "特性（C#）、属性（Java 等）", explanation: "在编程中，用于为代码元素（如类、方法）添加元数据或修饰信息，以影响其行为或提供额外数据。", category: "编程语言", favorite: false },
+ { term: "augmented reality", translation: "增强实现（AR）", explanation: "增强现实（AR）是一种将虚拟信息叠加到真实世界中的技术，通过设备如手机或眼镜实现交互体验。", category: "人工智能", favorite: false },
+ { term: "authentication", translation: "身份验证", explanation: "身份验证是确认用户或系统身份的过程，通常通过密码、生物特征等方式确保访问者合法。", category: "网络安全", favorite: false },
+ { term: "authorization", translation: "授权", explanation: "授权是在身份验证后，决定用户或系统可以访问哪些资源或执行哪些操作的权限管理机制。", category: "网络安全", favorite: false },
+ { term: "auto-generated properties", translation: "自动生成的属性", explanation: "自动生成的属性是编程中由工具或框架自动创建的属性，常用于简化代码，如数据库映射或序列化。", category: "开发工具", favorite: false },
+ { term: "automated unit testing", translation: "自动化单元测试", explanation: "自动化单元测试是使用脚本或工具自动运行代码单元测试的过程，以提高软件质量和开发效率。", category: "测试", favorite: false },
+ { term: "automation", translation: "自动化", explanation: "自动化是指使用技术或系统自动执行任务，减少人工干预，常见于软件开发、运维和工业生产中。", category: "软件工程", favorite: false },
+ { term: "autonomous", translation: "独立性", explanation: "独立性指系统或组件能够自主运行，不依赖外部控制，常用于描述自动化系统或分布式架构。", category: "计算机基础", favorite: false },
+ { term: "auxiliary database", translation: "辅助数据库", explanation: "辅助数据库是用于支持主数据库的额外数据库，通常存储备份、日志或缓存数据以提高系统性能。", category: "数据库", favorite: false },
+ { term: "availability", translation: "可用性", explanation: "可用性指系统或服务在需要时可正常访问和使用的程度，是衡量系统可靠性和用户体验的重要指标。", category: "软件工程", favorite: false },
+ { term: "availability set", translation: "可用性集", explanation: "可用性集是云计算中用于确保虚拟机高可用性的机制，通过分布在不同物理硬件上减少单点故障风险。", category: "云计算", favorite: false },
+ { term: "AZs", translation: "可用性区域（Availability Zones，亚马逊 AWS 中数据中心的叫法）", explanation: "AZs是亚马逊AWS中物理隔离的数据中心区域，用于提高应用的可用性和容错能力，防止单点故障。", category: "云计算", favorite: false },
+ { term: "BaaS", translation: "Battery as a Service，电池即服务（电池租用商业模式）", explanation: "BaaS是一种电池租用商业模式，用户无需购买电池，而是按需租用，常见于电动汽车等领域。", category: "其他", favorite: false },
+ { term: "Backend as a Service", translation: "后端即服务（BaaS）", explanation: "后端即服务是一种云服务模式，为开发者提供后端基础设施（如数据库、用户认证），简化应用开发。", category: "云计算", favorite: false },
+ { term: "backpane", translation: "底板", explanation: "底板是计算机硬件中的一块板卡，用于连接其他组件（如扩展卡），提供电气和机械支持。", category: "硬件架构", favorite: false },
+ { term: "backward compatibility", translation: "向后兼容性", explanation: "向后兼容性指新版本软件或硬件能够支持旧版本的功能或数据，确保用户升级后仍能正常使用。", category: "软件工程", favorite: false },
+ { term: "bandwidth", translation: "带宽", explanation: "带宽指网络或通信信道中数据传输的最大速率，通常以比特每秒（bps）为单位，影响数据传输速度。", category: "计算机网络", favorite: false },
+ { term: "bar code", translation: "条形码", explanation: "条形码是一种用黑白条纹表示数据的图形标识，通过扫描设备读取，常用于商品管理和库存跟踪。", category: "其他", favorite: false },
+ { term: "Base Class Library", translation: "基类库（BCL）", explanation: "基类库是.NET框架中的一组核心类库，提供基本功能（如文件操作、字符串处理），支持多种编程语言。", category: "编程语言", favorite: false },
+ { term: "baseline", translation: "准线", explanation: "准线是项目或系统中的基准线，用于衡量后续变更或性能，常见于软件测试和项目管理中。", category: "项目管理", favorite: false },
+ { term: "baud", translation: "波特", explanation: "波特是数据传输速率的单位，表示每秒信号变化的次数，常用于串行通信，但现代多用比特率。", category: "计算机网络", favorite: false },
+ { term: "BCL", translation: "基类库（Base Class Library）", explanation: "BCL是.NET框架中的一组核心类库，提供了基础的数据类型、集合、IO操作等常用功能，是开发.NET应用程序的基础。", category: "编程语言", favorite: false },
+ { term: "bear", translation: "熊", explanation: "在计算机术语中，'bear'通常不是专业术语，可能指代其他含义，如测试中的'熊市'或俚语，但无标准定义。", category: "其他", favorite: false },
+ { term: "behavior", translation: "行为", explanation: "行为指软件或系统中对象或组件对外部事件的响应方式，常用于描述对象在面向对象编程中的方法或操作。", category: "软件工程", favorite: false },
+ { term: "behavior preserving program transformations", translation: "行为保留式程序转换", explanation: "行为保留式程序转换指在代码重构或优化过程中，确保程序的外部行为不变，只改变内部结构以提高可维护性或性能。", category: "软件工程", favorite: false },
+ { term: "Behavioral Design Patterns", translation: "行为性设计模式", explanation: "行为性设计模式是设计模式的一种，关注对象之间的通信和职责分配，例如观察者模式或策略模式，以提升代码灵活性。", category: "设计模式", favorite: false },
+ { term: "Behavioral error", translation: "行为错误", explanation: "行为错误指程序运行时产生的逻辑错误，导致输出不符合预期，但程序仍能运行，通常需要通过调试来发现和修复。", category: "软件工程", favorite: false },
+ { term: "BERT", translation: "Bidirectional Encoder Representations from Transformers，谷歌公司的 LLM，对 NLP 研究产生了重大影响。该模型使用双向方法从一个词的左右两边捕捉上下文，使得各种任务的性能提高，如情感分析和命名实体识别。", explanation: "BERT是谷歌开发的预训练语言模型，采用双向Transformer架构，能理解上下文，显著提升自然语言处理任务如问答和文本分类的性能。", category: "人工智能", favorite: false },
+ { term: "BFF", translation: "为前端服务的后端（Backends For Frontends）", explanation: "BFF是一种架构模式，为不同前端（如Web或移动端）创建专门的后端服务，以优化API响应和用户体验，减少前端复杂性。", category: "后端开发", favorite: false },
+ { term: "BFS", translation: "广度优先搜索", explanation: "BFS是一种图或树遍历算法，从起点开始逐层探索所有相邻节点，常用于寻找最短路径或解决迷宫问题。", category: "算法", favorite: false },
+ { term: "Big Ball of Mud", translation: "大泥球（BBM）", explanation: "大泥球指软件系统中结构混乱、难以维护的代码，通常由于快速开发或缺乏设计导致，是反模式的一种，应避免。", category: "软件工程", favorite: false },
+ { term: "big data", translation: "大数据", explanation: "大数据是指规模巨大、类型多样、处理速度快的数据集合，传统数据处理工具难以处理，常用于分析和挖掘价值信息。", category: "计算机基础", favorite: false },
+ { term: "Big Design Up Front", translation: "大优先设计（BDUF）", explanation: "大优先设计是一种软件开发方法，要求在项目开始前完成详细的设计和规划，以减少后期变更，但可能缺乏灵活性。", category: "软件工程", favorite: false },
+ { term: "binary", translation: "二进制的", explanation: "二进制是一种基于0和1的数字系统，是计算机内部数据表示和处理的基础，所有信息都以二进制形式存储和运算。", category: "计算机基础", favorite: false },
+ { term: "binochlar", translation: "双目并用的", explanation: "双目并用通常指在计算机视觉或人工智能中，使用两个摄像头或传感器模拟人类双眼，以获取深度信息或立体视觉。", category: "人工智能", favorite: false },
+ { term: "bit", translation: "比特", explanation: "比特是计算机中最小的数据单位，表示一个二进制位（0或1），用于衡量数据大小或传输速率，如比特每秒。", category: "计算机基础", favorite: false },
+ { term: "Bit-field", translation: "位域", explanation: "位域是一种数据结构，允许在单个整数类型变量中存储多个布尔值或小整数，通过位操作节省内存空间。", category: "数据结构", favorite: false },
+ { term: "bitnik", translation: "比特族", explanation: "比特族可能指早期互联网文化中的群体，强调技术探索和自由分享，但这不是一个标准计算机术语，分类基于推测。", category: "其他", favorite: false },
+ { term: "blob", translation: "BLOB", explanation: "BLOB（二进制大对象）是数据库中用于存储大量二进制数据（如图像、音频文件）的数据类型，不直接解析内容。", category: "数据库", favorite: false },
+ { term: "block", translation: "阻断", explanation: "阻断在计算机中通常指进程或线程被暂停执行，等待某个条件（如I/O操作完成）满足，以协调资源访问。", category: "操作系统", favorite: false },
+ { term: "block blob", translation: "块 BLOB", explanation: "块BLOB是云存储（如Azure Blob Storage）中的一种类型，用于存储大型二进制数据，分成多个块以提高上传和管理效率。", category: "云计算", favorite: false },
+ { term: "Blockchain as a Service", translation: "区块链即服务（BaaS）", explanation: "区块链即服务（BaaS）是一种云服务，允许用户通过云平台构建、托管和使用区块链应用，而无需自行管理底层基础设施。", category: "云计算", favorite: false },
+ { term: "bottleneck", translation: "瓶颈", explanation: "瓶颈指系统或流程中限制整体性能或效率的薄弱环节，通常导致资源拥堵或延迟，影响整体产出。", category: "计算机基础", favorite: false },
+ { term: "bounded context", translation: "边界上下文、界限上下文", explanation: "边界上下文是领域驱动设计（DDD）中的概念，用于定义特定模型或子系统的边界，确保内部概念清晰且独立于外部上下文。", category: "软件工程", favorite: false },
+ { term: "box", translation: "装箱", explanation: "装箱指将值类型数据转换为引用类型对象的过程，通常发生在编程语言中（如C#），以便在需要对象的上下文中使用。", category: "编程语言", favorite: false },
+ { term: "bps", translation: "bits per second，比特/秒", explanation: "比特/秒（bps）是数据传输速率的单位，表示每秒传输的比特数，常用于衡量网络带宽或通信速度。", category: "计算机网络", favorite: false },
+ { term: "Brainstorming", translation: "头脑风暴（脑暴）", explanation: "头脑风暴是一种集体创意方法，通过自由讨论和想法碰撞，激发创新解决方案，常用于项目初期或问题分析阶段。", category: "项目管理", favorite: false },
+ { term: "BRD", translation: "商业需求文档（Business Requirements Document）", explanation: "商业需求文档（BRD）是描述项目商业目标、需求和预期成果的正式文档，用于指导项目开发和确保与业务对齐。", category: "项目管理", favorite: false },
+ { term: "breakpoint", translation: "断点", explanation: "断点是调试工具中的设置点，程序执行到此处时会暂停，允许开发者检查变量状态、执行流程，以便查找和修复错误。", category: "开发工具", favorite: false },
+ { term: "Bridge", translation: "桥接", explanation: "桥接指连接不同网络、系统或组件的技术或设备，例如网络桥接器用于在数据链路层转发数据帧，实现网络扩展。", category: "计算机网络", favorite: false },
+ { term: "Bridge Pattern", translation: "桥接模式", explanation: "桥接模式是一种结构型设计模式，将抽象部分与实现部分分离，使它们可以独立变化，提高系统的灵活性和可扩展性。", category: "设计模式", favorite: false },
+ { term: "broadcast", translation: "（无线电或电视）广播", explanation: "在计算机网络中，broadcast指将数据包发送到同一网络内所有设备的通信方式，常用于发现服务或发送通告。", category: "计算机网络", favorite: false },
+ { term: "Broken Hierarchy", translation: "支离破碎的层次结构", explanation: "一种软件设计中的反模式，指类继承层次结构不合理，导致子类与父类关系混乱，违反了面向对象的设计原则。", category: "软件工程", favorite: false },
+ { term: "Broken Modularization", translation: "拆散的模块化", explanation: "一种软件设计反模式，指本应紧密相关的代码被分散到不同模块中，增加了模块间的耦合，降低了可维护性。", category: "软件工程", favorite: false },
+ { term: "brownfield project", translation: "行进中项目", explanation: "指在已有系统或代码基础上进行开发或改造的项目，通常需要处理遗留代码和兼容性问题，与全新项目相对。", category: "软件工程", favorite: false },
+ { term: "Browser Object Model", translation: "浏览器对象模型（BOM）", explanation: "浏览器对象模型，是JavaScript中用于与浏览器窗口交互的API集合，例如操作历史记录、地址栏和屏幕尺寸等。", category: "前端开发", favorite: false },
+ { term: "browser-server", translation: "浏览器-服务器", explanation: "一种软件架构模式，客户端通过浏览器访问远程服务器上的应用和数据，典型代表是Web应用程序。", category: "计算机网络", favorite: false },
+ { term: "bug", translation: "缺陷", explanation: "指软件或硬件中存在的错误、缺陷或故障，会导致程序运行异常或产生不正确的结果，需要修复。", category: "软件工程", favorite: false },
+ { term: "Builder Pattern", translation: "建造者模式", explanation: "一种创建型设计模式，用于分步构建复杂对象，将对象的构建过程与表示分离，提高灵活性和可读性。", category: "设计模式", favorite: false },
+ { term: "built-in", translation: "内置的，内建的；嵌入的；内置", explanation: "指在编程语言、框架或系统中预先集成好的功能、类库或工具，无需额外安装即可直接使用。", category: "编程语言", favorite: false },
+ { term: "bulkhead", translation: "舱壁", explanation: "一种软件架构模式，通过隔离系统组件来限制故障传播，提高系统容错性，类似于船舶的防水舱壁设计。", category: "软件工程", favorite: false },
+ { term: "business intelligence", translation: "商业智能，将企业中现有的数据进行有效的整合，快速准确地提供报表并提出决策依据，帮助企业做出明智的业务经营决策。", explanation: "商业智能（BI）指利用数据分析和可视化工具，将企业数据转化为可操作的洞察，以支持业务决策和战略规划。", category: "软件工程", favorite: false },
+ { term: "business layer", translation: "业务层", explanation: "业务层是软件架构中的一层，负责处理应用程序的核心业务规则和逻辑，连接表示层和数据层。", category: "软件工程", favorite: false },
+ { term: "business logic layer", translation: "业务逻辑层", explanation: "业务逻辑层是业务层的一部分，专门实现具体的业务规则和流程，确保数据的一致性和有效性。", category: "软件工程", favorite: false },
+ { term: "Business Requirements Document", translation: "商业需求文档（BRD）", explanation: "商业需求文档（BRD）是描述项目商业目标、需求和预期成果的正式文档，用于指导项目开发和评估。", category: "项目管理", favorite: false },
+ { term: "busy (status)", translation: "忙（状态）；繁忙（状态）", explanation: "忙状态指系统或设备正在处理任务，无法立即响应新请求，常见于操作系统或网络通信中。", category: "操作系统", favorite: false },
+ { term: "byte", translation: "字节", explanation: "字节是计算机存储和处理数据的基本单位，通常由8位二进制数组成，用于表示字符或数值。", category: "计算机基础", favorite: false },
+ { term: "cable", translation: "电缆", explanation: "电缆是用于传输电力或数据的物理线缆，由绝缘材料包裹的导线组成，常见于网络和硬件连接。", category: "硬件架构", favorite: false },
+ { term: "Cache/Caching", translation: "缓存", explanation: "缓存是临时存储数据的高速存储器，用于加快数据访问速度，减少对慢速存储（如硬盘）的依赖。", category: "计算机基础", favorite: false },
+ { term: "call stack", translation: "调用堆栈", explanation: "调用堆栈是程序运行时管理函数调用和返回的数据结构，记录函数执行顺序和局部变量，用于控制流程。", category: "计算机基础", favorite: false },
+ { term: "callout box", translation: "标注框", explanation: "标注框是用户界面中的图形元素，用于突出显示或解释特定内容，常见于文档、网页或演示文稿中。", category: "前端开发", favorite: false },
+ { term: "camelCase", translation: "camel 大小写", explanation: "一种命名约定，其中复合词的每个单词（除第一个外）首字母大写，其余字母小写，常用于编程中的变量和函数命名。", category: "编程语言", favorite: false },
+ { term: "canary releasing", translation: "金丝雀发布", explanation: "一种软件发布策略，先将新版本部署给一小部分用户（金丝雀），测试稳定后再逐步扩大范围，以降低风险。", category: "软件工程", favorite: false },
+ { term: "carbon copy", translation: "复写本，副本；抄送（CC）", explanation: "在电子邮件中，指将邮件副本发送给其他收件人（CC），使其能看到邮件内容但非主要收件人。", category: "计算机网络", favorite: false },
+ { term: "carriage return", translation: "回车", explanation: "一个控制字符，用于将光标移动到当前行的开头，常见于文本处理和早期计算机系统中。", category: "计算机基础", favorite: false },
+ { term: "Cascading Style Sheets", translation: "层叠样式表（CSS）", explanation: "一种样式表语言，用于描述HTML或XML文档的呈现方式，控制网页的布局、颜色和字体等视觉样式。", category: "前端开发", favorite: false },
+ { term: "catastrophic failover", translation: "灾难性故障转移", explanation: "一种故障转移机制，当系统发生严重故障时，自动切换到备用系统，但可能导致数据丢失或服务中断。", category: "云计算", favorite: false },
+ { term: "CD", translation: "持续交付（Continuous Delivery）", explanation: "一种软件开发实践，确保代码随时可以可靠地发布到生产环境，通过自动化流程实现快速、频繁的交付。", category: "软件工程", favorite: false },
+ { term: "CDC", translation: "消费者驱动的契约（Customer-Driven Contract）", explanation: "一种测试方法，消费者（如客户端）定义与服务提供者的契约，确保API变更不会破坏现有功能。", category: "测试", favorite: false },
+ { term: "CDN", translation: "内容分发网络（Content Delivery Network）", explanation: "一个分布式网络系统，通过将内容缓存到全球多个节点，加速用户访问网站的速度和可靠性。", category: "计算机网络", favorite: false },
+ { term: "cell", translation: "单元", explanation: "在电子表格或表格中，指行和列交叉形成的最小数据单元，用于存储单个数据值。", category: "计算机基础", favorite: false },
+ { term: "cellular telephone", translation: "移动电话", explanation: "移动电话是一种便携式通信设备，通过蜂窝网络进行语音和数据传输，是现代移动通信的基础设备。", category: "移动开发", favorite: false },
+ { term: "Central Processing Unit", translation: "中央处理器（CPU）", explanation: "中央处理器是计算机的核心部件，负责执行指令和处理数据，控制计算机的整体运行。", category: "硬件架构", favorite: false },
+ { term: "certificate", translation: "（数字）证书", explanation: "数字证书是一种电子文件，用于验证身份和加密通信，确保网络传输的安全性和可信性。", category: "网络安全", favorite: false },
+ { term: "Certificate Authority", translation: "证书认证机构", explanation: "证书认证机构是负责颁发和管理数字证书的权威机构，确保网络身份的真实性和安全性。", category: "网络安全", favorite: false },
+ { term: "Chain of Responsibility", translation: "责任链", explanation: "责任链是一种设计模式，将请求沿处理链传递，直到有对象处理它，常用于解耦发送者和接收者。", category: "设计模式", favorite: false },
+ { term: "Chain of Responsibility Pattern", translation: "责任链模式", explanation: "责任链模式是一种行为设计模式，允许多个对象依次处理请求，避免请求发送者与接收者直接耦合。", category: "设计模式", favorite: false },
+ { term: "Chain-of-Thought", translation: "思维链（CoT） ", explanation: "思维链是一种推理方法，通过逐步分解问题来引导模型生成更准确的答案，常用于人工智能领域。", category: "人工智能", favorite: false },
+ { term: "Chain-of-Thought-Self-Consistency", translation: "思维链自洽性 ", explanation: "思维链自洽性是一种改进的推理技术，通过生成多个思维链并选择一致的结果，提高模型的可靠性和准确性。", category: "人工智能", favorite: false },
+ { term: "Change Bidirectional Association to Unidirectional", translation: "将双向关联改为单向关联", explanation: "将双向关联改为单向关联是一种重构技术，用于简化类之间的关系，减少依赖和提高代码可维护性。", category: "软件工程", favorite: false },
+ { term: "Change Point", translation: "修改点：需要往代码中引入修改的点", explanation: "修改点是代码中需要引入变更的特定位置，通常用于软件维护或重构，以优化功能或修复问题。", category: "软件工程", favorite: false },
+ { term: "Change Reference to Value", translation: "将引用对象改为值对象", explanation: "一种重构技术，将原本通过引用共享的对象改为独立的值对象，每个对象拥有自己的数据副本，适用于对象较小且不可变的情况。", category: "软件工程", favorite: false },
+ { term: "Change Unidirectional Association to Bidirectional", translation: "将单向关联改为双向关联", explanation: "一种重构技术，在类之间添加反向关联，使两个类能够互相访问，以简化数据访问逻辑，但可能增加维护复杂性。", category: "软件工程", favorite: false },
+ { term: "Change Value to Reference", translation: "将值对象改为引用对象", explanation: "一种重构技术，将原本独立的值对象改为通过引用共享的对象，以减少重复数据并确保一致性，常用于对象较大或可变时。", category: "软件工程", favorite: false },
+ { term: "channel", translation: "信道，频道", explanation: "在计算机网络中，指传输数据的物理或逻辑通路；在通信中，指特定频率范围或信息传递的媒介。", category: "计算机网络", favorite: false },
+ { term: "character", translation: "字符", explanation: "计算机中表示文本的基本单位，如字母、数字或符号，通常用编码标准（如ASCII或Unicode）存储和处理。", category: "计算机基础", favorite: false },
+ { term: "Characterization test", translation: "特征测试：描述软件某部分的当前行为的测试，当你修改代码时能够用来保持行为", explanation: "一种测试方法，用于捕获和描述软件现有行为，以便在修改代码时验证行为是否保持不变，常用于重构或维护。", category: "测试", favorite: false },
+ { term: "check in", translation: "签入", explanation: "版本控制中的操作，将本地修改后的文件提交到中央仓库，以更新代码库并记录变更历史，便于团队协作。", category: "开发工具", favorite: false },
+ { term: "check out", translation: "签出", explanation: "版本控制中的操作，从中央仓库获取文件副本到本地工作区，以便进行修改或查看，通常锁定文件以防止冲突。", category: "开发工具", favorite: false },
+ { term: "checksum", translation: "校验和", explanation: "一种数据完整性验证方法，通过对数据计算固定长度的数值摘要，用于检测传输或存储过程中的错误或篡改。", category: "计算机基础", favorite: false },
+ { term: "chip", translation: "芯片", explanation: "集成电路的俗称，由半导体材料制成的小型电子元件，包含大量晶体管，用于执行计算、存储或控制功能。", category: "硬件架构", favorite: false },
+ { term: "choreography", translation: "协同", explanation: "一种服务间通信模式，其中每个服务都知道业务流程，并直接与其他服务协调，无需中央编排器。", category: "软件工程", favorite: false },
+ { term: "CI", translation: "持续集成（Continuous Integration）", explanation: "一种软件开发实践，团队成员频繁地将代码集成到共享仓库，并通过自动化构建和测试来快速发现错误。", category: "软件工程", favorite: false },
+ { term: "cipher", translation: "密码", explanation: "一种用于加密或解密数据的算法，将明文转换为密文（加密）或将密文恢复为明文（解密）。", category: "网络安全", favorite: false },
+ { term: "claim", translation: "声明", explanation: "在认证和授权中，指关于用户身份、属性或权限的陈述，通常用于令牌（如JWT）中传递信息。", category: "网络安全", favorite: false },
+ { term: "class definition", translation: "类定义", explanation: "在面向对象编程中，定义一类对象的蓝图，包括属性（数据）和方法（行为），用于创建对象实例。", category: "编程语言", favorite: false },
+ { term: "Clean Object-oriented and Layered Architecture", translation: "整洁面向对象分层架构（COLA）", explanation: "一种软件架构设计方法，强调清晰的面向对象设计、分层结构和领域驱动，以提高代码的可维护性和可扩展性。", category: "软件工程", favorite: false },
+ { term: "CLI", translation: "公共语言基础结构（Common Language Infrastructure）", explanation: "由微软定义的一套标准，描述了.NET框架中代码执行环境的核心功能，包括通用类型系统和中间语言。", category: "编程语言", favorite: false },
+ { term: "client-server", translation: "客户端-服务器", explanation: "一种分布式计算架构，其中客户端向服务器请求服务或资源，服务器响应并提供这些服务，常见于网络应用。", category: "计算机网络", favorite: false },
+ { term: "clone", translation: "克隆，复制", explanation: "在编程中，指复制对象或数据，创建其副本；在版本控制中，指复制整个代码仓库到本地。", category: "计算机基础", favorite: false },
+ { term: "cloud computing", translation: "云计算", explanation: "一种通过互联网提供计算资源（如服务器、存储、数据库、网络）的服务模式，用户按需使用，无需管理物理硬件。", category: "云计算", favorite: false },
+ { term: "cloud service", translation: "云服务", explanation: "云服务是通过互联网提供的计算资源和服务，如存储、服务器和软件，用户按需使用，无需管理底层基础设施。", category: "云计算", favorite: false },
+ { term: "CLR", translation: "公共语言运行时（Common Language Runtime）", explanation: "CLR是.NET框架的核心组件，负责管理代码执行，提供内存管理、安全性和异常处理等服务，支持多种编程语言。", category: "编程语言", favorite: false },
+ { term: "CLS", translation: "公共语言规范（Common Language Specification）", explanation: "CLS是.NET框架中的一组规则，确保不同编程语言编写的代码可以互操作，促进语言间的兼容性和集成。", category: "编程语言", favorite: false },
+ { term: "cluster", translation: "集群", explanation: "集群是将多台计算机连接起来协同工作，以提高性能、可靠性和可扩展性，常用于处理大规模计算任务。", category: "硬件架构", favorite: false },
+ { term: "clustered index", translation: "聚集索引", explanation: "聚集索引是数据库中一种索引类型，其中数据行的物理存储顺序与索引键顺序一致，每个表只能有一个聚集索引。", category: "数据库", favorite: false },
+ { term: "co-occurring smells", translation: "同时出现的坏味", explanation: "同时出现的坏味指在软件代码中多个设计或代码问题同时发生，可能相互影响，增加维护难度和错误风险。", category: "软件工程", favorite: false },
+ { term: "CoAP", translation: "受限应用协议", explanation: "CoAP是一种轻量级应用层协议，专为受限设备和低功耗网络设计，用于物联网中的机器对机器通信。", category: "计算机网络", favorite: false },
+ { term: "coaxial cable", translation: "同轴电缆", explanation: "同轴电缆是一种传输线，由中心导体、绝缘层、屏蔽层和外护套组成，常用于有线电视和网络信号传输。", category: "计算机网络", favorite: false },
+ { term: "COBIT", translation: "信息和相关技术的控制目标，Control Objectives for Information and Related Technology4", explanation: "COBIT是一个框架，用于管理和治理企业信息技术，提供最佳实践和控制目标，以确保IT与业务目标对齐。", category: "项目管理", favorite: false },
+ { term: "CoC", translation: "更改开销（Cost of Change）", explanation: "更改开销指在软件开发过程中，修改代码或系统所需的成本，包括时间、资源和风险，通常随项目进展增加。", category: "软件工程", favorite: false },
+ { term: "code smell", translation: "代码味道", explanation: "代码中可能存在问题或需要改进的结构特征，虽然不一定是错误，但暗示着潜在的设计缺陷或维护困难。", category: "软件工程", favorite: false },
+ { term: "COLA", translation: "整洁面向对象分层架构，Clean Object-oriented and Layered Architecture", explanation: "一种软件架构设计模式，强调面向对象和分层结构，旨在提高代码的可维护性、可测试性和清晰度。", category: "设计模式", favorite: false },
+ { term: "Collapse Hierarchy", translation: "折叠继承关系", explanation: "重构技术，用于消除继承层次中不必要的类，将子类合并到父类中，简化代码结构。", category: "软件工程", favorite: false },
+ { term: "comcurrency", translation: "并发", explanation: "计算机系统中多个任务或进程在同一时间段内交替执行，以提高资源利用率和系统效率。", category: "计算机基础", favorite: false },
+ { term: "command", translation: "命令", explanation: "在计算机中，指用户或程序发出的指令，用于执行特定操作或任务，如运行程序或修改设置。", category: "计算机基础", favorite: false },
+ { term: "Command Pattern", translation: "命令模式", explanation: "一种行为设计模式，将请求封装为对象，从而允许参数化、队列化或日志化请求，支持撤销操作。", category: "设计模式", favorite: false },
+ { term: "command prompt", translation: "命令行提示", explanation: "操作系统提供的文本界面，用户可以在其中输入命令来执行程序、管理文件或配置系统。", category: "操作系统", favorite: false },
+ { term: "Command/Query Responsibility Segregation", translation: "命令/查询职责分离（CQRS）", explanation: "一种架构模式，将数据写入（命令）和读取（查询）操作分离，使用不同的模型来处理，以提高性能和可扩展性。", category: "软件工程", favorite: false },
+ { term: "Command/Query Separation", translation: "命令/查询分离（CQS）", explanation: "软件设计原则，强调方法应该要么是命令（执行操作并改变状态），要么是查询（返回数据但不改变状态），不应混合。", category: "软件工程", favorite: false },
+ { term: "commingled bits", translation: "混合的比特", explanation: "指在数据传输或存储中，不同来源或类型的比特位混合在一起，可能导致数据解析错误或效率降低。", category: "计算机基础", favorite: false },
+ { term: "communication", translation: "通信", explanation: "通信指计算机系统之间或系统内部组件之间交换数据和信息的过程，包括数据传输、协议交互等。", category: "计算机网络", favorite: false },
+ { term: "community", translation: "社区", explanation: "社区指围绕特定技术、项目或兴趣形成的用户或开发者群体，通过交流协作推动技术发展。", category: "软件工程", favorite: false },
+ { term: "committed", translation: "已提交（的）", explanation: "已提交（的）通常指在版本控制系统中，代码修改被永久保存到仓库中的状态，表示一个完整的变更记录。", category: "开发工具", favorite: false },
+ { term: "Common Intermediate Language", translation: "公共中间语言", explanation: "公共中间语言（CIL）是.NET平台中的一种低级、平台无关的指令集，由高级语言编译生成，供CLR执行。", category: "编程语言", favorite: false },
+ { term: "Common Language Infrastructure", translation: "公共语言基础结构（CLI）", explanation: "公共语言基础结构（CLI）是.NET框架的开放标准，定义了可执行代码和运行时环境的结构，包括CLR、CTS等组件。", category: "编程语言", favorite: false },
+ { term: "Common Language Runtime", translation: "公共语言运行时（CLR）", explanation: "公共语言运行时（CLR）是.NET框架的核心组件，负责管理代码执行，提供内存管理、安全性、异常处理等服务。", category: "编程语言", favorite: false },
+ { term: "Common Language Specification", translation: "公共语言规范（CLS）", explanation: "公共语言规范（CLS）是.NET框架中的一组规则，确保不同编程语言编写的代码能够互操作，遵循共同标准。", category: "编程语言", favorite: false },
+ { term: "Common Type System", translation: "公共类型系统（CTS）", explanation: "公共类型系统（CTS）是.NET框架的一部分，定义了所有支持类型的规则和结构，确保语言间的类型兼容性。", category: "编程语言", favorite: false },
+ { term: "common name", translation: "通用名称", explanation: "通用名称通常指在证书或安全上下文中用于标识实体（如网站域名）的名称，用于身份验证和加密通信。", category: "网络安全", favorite: false },
+ { term: "compatibility", translation: "兼容性", explanation: "兼容性指软件、硬件或系统之间能够协同工作而不产生冲突的能力，包括版本、平台或标准间的适配性。", category: "计算机基础", favorite: false },
+ { term: "Competing Consumer pattern", translation: "消费者竞争模式", explanation: "一种消息处理模式，多个消费者同时从同一消息队列中获取并处理消息，提高系统吞吐量和可靠性。", category: "设计模式", favorite: false },
+ { term: "compile-time correctness checking", translation: "编译时正确性检查", explanation: "在编译阶段对代码进行静态分析，检查类型安全、语法错误等，确保程序在运行前符合规范。", category: "编程语言", favorite: false },
+ { term: "Component Object Model", translation: "组件对象模型（COM）", explanation: "微软提出的二进制接口标准，允许不同语言编写的软件组件跨进程或网络进行交互和通信。", category: "软件工程", favorite: false },
+ { term: "Composability", translation: "组合性", explanation: "系统或组件能够以灵活的方式组合成更复杂结构的能力，强调模块化设计和可重用性。", category: "软件工程", favorite: false },
+ { term: "composite formatting", translation: "复合格式化", explanation: "一种字符串格式化方法，将多个数据项按指定格式组合成单个字符串，常用于输出或日志记录。", category: "编程语言", favorite: false },
+ { term: "Composite Pattern", translation: "复合模式、组合模式", explanation: "结构型设计模式，将对象组合成树形结构以表示部分-整体层次，使客户端统一处理单个对象和组合对象。", category: "设计模式", favorite: false },
+ { term: "concurrency conflicts", translation: "并发冲突", explanation: "多个进程或线程同时访问共享资源时，由于执行顺序不确定导致的数据不一致或逻辑错误现象。", category: "操作系统", favorite: false },
+ { term: "concurrency mode", translation: "并发模式", explanation: "系统或框架中处理并发操作的方式，如乐观并发、悲观并发等，用于管理资源访问和事务处理。", category: "数据库", favorite: false },
+ { term: "conditional compilation", translation: "条件编译", explanation: "根据预定义条件（如平台、调试模式）在编译时选择性地包含或排除部分代码，生成不同版本的程序。", category: "编程语言", favorite: false },
+ { term: "conditional compilation statement", translation: "条件编译语句", explanation: "实现条件编译的代码指令，如C/C++中的#ifdef、#ifndef，控制编译器如何处理特定代码块。", category: "编程语言", favorite: false },
+ { term: "configuration", translation: "配置，设置", explanation: "配置指软件或系统中各项参数的设定，用于调整程序行为或环境，通常保存在配置文件中。", category: "软件工程", favorite: false },
+ { term: "connection string", translation: "连接字符串", explanation: "连接字符串是包含数据库连接信息的文本，如服务器地址、数据库名和认证凭据，用于建立数据库连接。", category: "数据库", favorite: false },
+ { term: "Consolidate Conditional Expression", translation: "合并条件表达式", explanation: "合并条件表达式是一种代码重构技术，将多个条件判断合并为一个逻辑表达式，以提高代码可读性和维护性。", category: "软件工程", favorite: false },
+ { term: "Consolidate Duplicate Conditional Fragments", translation: "合并重复的条件片段", explanation: "合并重复的条件片段是一种代码重构技术，将重复出现在不同条件分支中的代码提取到公共位置，减少冗余。", category: "软件工程", favorite: false },
+ { term: "consistency", translation: "一致性", explanation: "一致性指在分布式系统或数据库中，数据在不同节点或事务中保持相同状态，确保操作的正确性和可靠性。", category: "数据库", favorite: false },
+ { term: "constructor", translation: "构造函数", explanation: "构造函数是面向对象编程中用于初始化新创建对象的方法，通常与类名相同，在对象创建时自动调用。", category: "编程语言", favorite: false },
+ { term: "container", translation: "容器", explanation: "容器是一种数据结构或运行时环境，用于存储和管理多个对象或组件，如数组、列表或Docker容器。", category: "数据结构", favorite: false },
+ { term: "Container As A Service", translation: "容器即服务（CaaS）", explanation: "容器即服务（CaaS）是一种云计算服务模型，提供容器化应用的部署、管理和编排平台，简化运维工作。", category: "云计算", favorite: false },
+ { term: "content", translation: "内容", explanation: "内容指软件或网站中呈现的信息，如文本、图像、视频等，是用户交互的核心部分。", category: "前端开发", favorite: false },
+ { term: "context", translation: "上下文", explanation: "上下文指程序运行时的环境信息，如变量状态、执行位置或用户会话，用于影响代码行为或决策。", category: "编程语言", favorite: false },
+ { term: "context map, 上下文映射图", translation: "上下文地图 ", explanation: "上下文映射图是领域驱动设计中的一种工具，用于可视化不同限界上下文之间的关系和交互方式。", category: "软件工程", favorite: false },
+ { term: "Context Mapping", translation: "上下文映射 ", explanation: "上下文映射是领域驱动设计中的实践，用于定义和管理不同业务上下文之间的边界和集成策略。", category: "软件工程", favorite: false },
+ { term: "contextual keyword", translation: "上下文关键字", explanation: "上下文关键字是在特定编程上下文中具有特殊含义的标识符，但在其他上下文中可作为普通标识符使用。", category: "编程语言", favorite: false },
+ { term: "continuous integration", translation: "持续集成", explanation: "持续集成是一种开发实践，要求开发者频繁地将代码集成到共享仓库中，并通过自动化构建和测试来快速发现错误。", category: "软件工程", favorite: false },
+ { term: "contribute", translation: "贡献", explanation: "贡献在开源项目中指个人或组织为项目提供的代码、文档、问题报告或其他形式的帮助和支持。", category: "软件工程", favorite: false },
+ { term: "Contributor License Agreement", translation: "贡献者许可协议", explanation: "贡献者许可协议是开源项目中贡献者与项目维护者之间的法律协议，明确贡献内容的版权和许可条款。", category: "软件工程", favorite: false },
+ { term: "convention", translation: "约定", explanation: "约定是在软件开发中团队共同遵守的规则或标准，如命名约定、代码风格约定，以提高代码一致性和可维护性。", category: "软件工程", favorite: false },
+ { term: "covariance", translation: "协变", explanation: "协变是类型系统中的概念，指子类型关系在泛型或函数返回类型中得以保持，例如List<Dog>可赋值给List<Animal>。", category: "编程语言", favorite: false },
+ { term: "contravariance", translation: "逆变", explanation: "逆变是类型系统中的概念，指子类型关系在泛型或函数参数类型中反转，例如Action<Animal>可赋值给Action<Dog>。", category: "编程语言", favorite: false },
+ { term: "convert", translation: "转换", explanation: "转换是将数据或对象从一种形式或类型转变为另一种形式或类型的过程，常见于编程中的类型转换或数据格式转换。", category: "编程语言", favorite: false },
+ { term: "Convert Procedural Design to Objects", translation: "将过程化设计转化为对象设计", explanation: "将基于过程或函数的程序设计转换为面向对象的设计方法，以提高代码的可维护性和复用性。", category: "软件工程", favorite: false },
+ { term: "cookie", translation: "Cookie", explanation: "网站存储在用户浏览器中的小型文本数据，用于跟踪会话状态、用户偏好等，实现状态管理。", category: "计算机网络", favorite: false },
+ { term: "copy-on-write", translation: "写时复制", explanation: "一种优化技术，在复制数据时先共享原数据，直到需要修改时才创建实际副本，以节省内存和提高性能。", category: "操作系统", favorite: false },
+ { term: "core", translation: "内核；.NET Core 的简写（能且仅能与 .NET Framework 的简写 nfx 同时出现，作如 nfx/core，单独使用时应为全称 .NET Core）", explanation: "指操作系统的核心部分，管理硬件和软件资源；或指微软的开源跨平台开发框架 .NET Core。", category: "操作系统", favorite: false },
+ { term: "core domain", translation: "核心领域", explanation: "在领域驱动设计中，指业务系统中最重要的、具有核心竞争力的子领域，需重点投入资源。", category: "软件工程", favorite: false },
+ { term: "corruption", translation: "损毁", explanation: "数据或文件在存储、传输过程中因错误、故障或攻击而损坏，导致内容不可用或异常。", category: "计算机基础", favorite: false },
+ { term: "Cosmetic issue", translation: "外观上问题", explanation: "软件中不影响功能但涉及界面、样式或用户体验的表面问题，如颜色、字体、对齐等细节缺陷。", category: "前端开发", favorite: false },
+ { term: "Cost of Change", translation: "更改开销（CoC）", explanation: "修改软件系统所需的时间、资源和金钱开销，随着开发进程推进，更改开销通常会增加。", category: "软件工程", favorite: false },
+ { term: "CoT", translation: "思维链（Chain-of-Thought）", explanation: "一种人工智能推理方法，通过逐步展示思维过程来引导模型生成更准确、可解释的答案。", category: "人工智能", favorite: false },
+ { term: "COTS", translation: "现成的商业软件（Commercial Off-The Shelf）", explanation: "指市场上可直接购买和使用的商业软件产品，无需定制开发，常用于快速部署解决方案。", category: "软件工程", favorite: false },
+ { term: "counterpoint", translation: "对位", explanation: "对位是音乐理论中的一种作曲技术，指两个或多个独立旋律线同时进行并和谐结合。在计算机领域有时用于比喻并行处理或多任务协调。", category: "其他", favorite: false },
+ { term: "Coupling count", translation: "耦合数", explanation: "耦合数在软件工程中衡量模块间相互依赖的程度。高耦合意味着模块间联系紧密，低耦合则更独立，是设计时追求的目标。", category: "软件工程", favorite: false },
+ { term: "CPU", translation: "中央处理器（Central Processing Unit）", explanation: "CPU是计算机的核心部件，负责执行程序指令和处理数据。它由控制单元、算术逻辑单元和寄存器组成，常被称为计算机的“大脑”。", category: "硬件架构", favorite: false },
+ { term: "CQRS", translation: "命令查询职责分离（Command-Query Responsibility Segregation）", explanation: "CQRS是一种软件架构模式，将数据修改（命令）和查询操作分离，使用不同的模型。这可以提高性能、安全性和系统的可扩展性。", category: "软件工程", favorite: false },
+ { term: "crash", translation: "（程序）崩溃", explanation: "程序崩溃指软件因错误（如内存访问违规、除零错误）而意外终止运行，通常会导致用户数据丢失并需要重启程序。", category: "软件工程", favorite: false },
+ { term: "crash dump", translation: "故障转储", explanation: "故障转储是程序崩溃时自动生成的文件，记录了崩溃瞬间的内存状态、寄存器值和调用堆栈等信息，用于后续的调试和分析。", category: "开发工具", favorite: false },
+ { term: "Creational Design Patterns", translation: "创建性设计模式", explanation: "创建性设计模式是一类处理对象创建机制的设计模式，旨在使对象创建更灵活、更符合特定场景。常见模式包括工厂方法、单例和建造者模式。", category: "设计模式", favorite: false },
+ { term: "CRC", translation: "类-职责-交互（class-responsibility-collaboration）", explanation: "CRC卡是一种面向对象设计的简易工具，用索引卡记录类的名称、职责和协作关系，帮助团队在早期快速建模和讨论系统结构。", category: "软件工程", favorite: false },
+ { term: "credential", translation: "凭证", explanation: "凭证是用于验证用户或系统身份的信息，例如用户名和密码、API密钥、数字证书或令牌，是访问控制和安全授权的基础。", category: "网络安全", favorite: false },
+ { term: "cririque", translation: "评估", explanation: "评估指对某个工作成果（如代码、设计或项目）进行系统性的分析和评价，以识别优点、缺点和改进建议，是质量保证的重要环节。", category: "软件工程", favorite: false },
+ { term: "CRM", translation: "客户关系管理（Customer Relationship Management）", explanation: "CRM是客户关系管理系统，用于管理企业与客户之间的互动，提升客户满意度和忠诚度。", category: "软件工程", favorite: false },
+ { term: "Cross Domain", translation: "跨域", explanation: "跨域指在Web开发中，浏览器出于安全考虑限制不同域名或端口间的资源访问，需特殊处理。", category: "前端开发", favorite: false },
+ { term: "Cross-browser", translation: "跨浏览器", explanation: "跨浏览器指网站或应用能在不同浏览器（如Chrome、Firefox）上正常运行，确保兼容性。", category: "前端开发", favorite: false },
+ { term: "Cross-platform", translation: "跨平台", explanation: "跨平台指软件或代码能在多种操作系统（如Windows、macOS、Linux）上运行，提高可移植性。", category: "软件工程", favorite: false },
+ { term: "Cross-Functional Requirement", translation: "跨功能需求（CFR）", explanation: "跨功能需求指软件的非功能性需求，如性能、安全、可用性，影响整体系统质量。", category: "软件工程", favorite: false },
+ { term: "CRT", translation: "cathode ray tube，阴极射线管", explanation: "CRT是阴极射线管，一种老式显示技术，通过电子束激发荧光屏产生图像，曾用于电视和显示器。", category: "硬件架构", favorite: false },
+ { term: "cruft", translation: "残留", explanation: "残留指代码或系统中无用、过时或冗余的部分，可能影响维护和性能，需定期清理。", category: "软件工程", favorite: false },
+ { term: "cryptography", translation: "密码术", explanation: "密码术是研究信息加密、解密和安全的学科，用于保护数据在传输和存储中的机密性。", category: "网络安全", favorite: false },
+ { term: "CTS", translation: "公共类型系统（Common Type System）", explanation: "CTS是公共类型系统，.NET框架的一部分，定义数据类型和规则，确保不同语言间的互操作性。", category: "编程语言", favorite: false },
+ { term: "cursor", translation: "光标", explanation: "光标是用户界面中的指示器，如鼠标指针或文本输入位置标记，用于交互和导航。", category: "计算机基础", favorite: false },
+ { term: "Customizability", translation: "可定制性", explanation: "指软件或系统允许用户根据需求调整功能、界面或行为的程度，体现了灵活性和适应性。", category: "软件工程", favorite: false },
+ { term: "cybraian", translation: "电脑族", explanation: "指经常使用电脑或依赖数字技术的人群，通常与网络文化或技术社区相关。", category: "计算机基础", favorite: false },
+ { term: "cyberspace", translation: "电脑空间", explanation: "指由计算机网络构成的虚拟空间，用户在其中进行信息交流、互动和活动。", category: "计算机网络", favorite: false },
+ { term: "cycle time", translation: "周期时间", explanation: "指计算机执行一个操作或完成一个任务所需的时间，常用于衡量系统性能。", category: "硬件架构", favorite: false },
+ { term: "cyclic digraph", translation: "有向有环图", explanation: "一种图结构，其中边有方向且包含至少一个环，允许节点通过路径回到自身。", category: "数据结构", favorite: false },
+ { term: "Cyclic Hierarchy", translation: "循环层次结构", explanation: "指在系统或软件中，层次结构中的元素相互依赖形成循环，可能导致设计复杂化。", category: "软件工程", favorite: false },
+ { term: "Cyclically-dependent Modularization", translation: "循环依赖式模块化", explanation: "指模块化设计中，模块之间相互依赖形成循环，可能影响代码的可维护性和解耦。", category: "软件工程", favorite: false },
+ { term: "Cyclomatic complexity", translation: "圈复杂度", explanation: "衡量程序代码复杂度的指标，基于控制流图中的线性独立路径数量，用于评估测试难度。", category: "软件工程", favorite: false },
+ { term: "DaaS", translation: "Data as a Service，数据即服务", explanation: "一种云计算服务模式，通过互联网提供数据存储、处理或访问服务，用户按需使用。", category: "云计算", favorite: false },
+ { term: "DAG", translation: "有向无循环图", explanation: "一种图数据结构，边有方向且无环，常用于表示任务依赖关系或数据流。", category: "数据结构", favorite: false },
+ { term: "dashboard", translation: "仪表盘", explanation: "一种可视化界面，用于集中展示关键数据、指标和图表，帮助用户快速了解系统状态或业务情况。", category: "前端开发", favorite: false },
+ { term: "data access layer", translation: "数据访问层", explanation: "软件架构中的一层，专门负责与数据库或其他数据源进行交互，执行数据的增删改查操作。", category: "软件工程", favorite: false },
+ { term: "Data Storage as a Service", translation: "数据存储即服务（DaaS）", explanation: "云计算服务的一种，提供按需的数据存储能力，用户无需管理底层硬件，通过网络即可存取数据。", category: "云计算", favorite: false },
+ { term: "data clumps", translation: "数据泥团", explanation: "代码坏味的一种，指在代码中多个地方重复出现相同的一组数据字段，导致代码冗余和难以维护。", category: "软件工程", favorite: false },
+ { term: "Data Encryption Standard", translation: "数据加密标准（DES）", explanation: "一种对称密钥加密算法，使用56位密钥对数据进行加密，曾广泛用于保护敏感信息，现已不够安全。", category: "网络安全", favorite: false },
+ { term: "data layer", translation: "数据层", explanation: "软件架构中的组成部分，负责数据的存储、管理和访问，为上层业务逻辑提供数据支持。", category: "软件工程", favorite: false },
+ { term: "data integrity", translation: "数据完整性", explanation: "指数据在存储、传输或处理过程中保持准确、一致和完整的特性，防止数据被非法篡改或破坏。", category: "数据库", favorite: false },
+ { term: "data invariant", translation: "数据不变式", explanation: "在程序执行过程中，数据必须始终保持成立的条件或属性，用于保证数据的正确性和一致性。", category: "软件工程", favorite: false },
+ { term: "data mining", translation: "数据挖掘", explanation: "从大量数据中通过算法自动发现隐藏的模式、趋势或知识的过程，用于支持决策和预测。", category: "计算机基础", favorite: false },
+ { term: "data pump", translation: "数据泵", explanation: "一种用于在不同数据库或系统之间高效导入、导出和转换大量数据的工具或服务。", category: "数据库", favorite: false },
+ { term: "Data Transfer Object", translation: "数据传输对象（DTO）", explanation: "数据传输对象（DTO）是一种设计模式，用于在不同层或系统间传输数据，通常包含属性但不包含业务逻辑，以提高数据传输效率。", category: "设计模式", favorite: false },
+ { term: "declarative programming", translation: "宣告式编程", explanation: "宣告式编程是一种编程范式，开发者描述程序应该达到的目标或状态，而不是具体步骤，如SQL或HTML，让系统自动处理实现细节。", category: "编程语言", favorite: false },
+ { term: "Decompose Conditional", translation: "分解条件表达式", explanation: "分解条件表达式是一种重构技术，将复杂的条件语句（如if-else）拆分为更小、更易读的方法或函数，以提高代码可维护性。", category: "软件工程", favorite: false },
+ { term: "Decorator Pattern", translation: "修饰器模式（DP）、装饰模式", explanation: "修饰器模式是一种结构型设计模式，允许动态地为对象添加新功能，通过包装原始对象而不修改其结构，增强灵活性。", category: "设计模式", favorite: false },
+ { term: "Deep Hierarchy", translation: "过深的层次结构", explanation: "过深的层次结构指在面向对象编程中，类继承层次过深，导致代码难以理解和维护，可能增加耦合度和复杂性。", category: "软件工程", favorite: false },
+ { term: "Default Literal", translation: "默认常值", explanation: "默认常值是编程语言中的特性，允许在变量或参数未提供值时使用预定义的默认值，简化代码并减少错误，常见于C#等语言。", category: "编程语言", favorite: false },
+ { term: "Defensive Programming", translation: "防御式编程", explanation: "防御式编程是一种编程实践，通过添加额外检查和处理（如输入验证、错误处理）来预防潜在错误或恶意攻击，提高软件健壮性。", category: "软件工程", favorite: false },
+ { term: "Deficient Encapsulation", translation: "不充分的封装2", explanation: "不充分的封装指在面向对象编程中，类或对象未能有效隐藏内部实现细节，导致外部代码过度依赖内部结构，降低可维护性和安全性。", category: "软件工程", favorite: false },
+ { term: "Definition of Done", translation: "完成的定义（DoD）", explanation: "完成的定义（DoD）是项目管理中的术语，指团队达成共识的一系列标准，用于确认任务或项目已完成，确保质量和一致性。", category: "项目管理", favorite: false },
+ { term: "denial-of-service attacks", translation: "拒绝服务攻击", explanation: "拒绝服务攻击是一种网络安全攻击，通过大量请求或恶意流量使目标系统（如网站或服务器）过载，导致合法用户无法访问服务。", category: "网络安全", favorite: false },
+ { term: "dependency injection", translation: "依赖注入（DI）", explanation: "依赖注入是一种设计模式，通过外部提供依赖对象，降低组件间的耦合度，提高代码可测试性和可维护性。", category: "设计模式", favorite: false },
+ { term: "dependency", translation: "依赖", explanation: "依赖指一个组件或模块需要另一个组件或模块才能正常工作，常见于软件开发和项目管理中。", category: "软件工程", favorite: false },
+ { term: "dependency digraph", translation: "依赖有向图", explanation: "依赖有向图是一种图结构，用于表示模块或任务间的依赖关系，节点表示实体，有向边表示依赖方向。", category: "软件工程", favorite: false },
+ { term: "deployment", translation: "部署", explanation: "部署是将软件应用发布到目标环境（如服务器或设备）的过程，使其可供用户访问和使用。", category: "软件工程", favorite: false },
+ { term: "dequeue", translation: "出列", explanation: "出列是队列数据结构的基本操作，从队列前端移除并返回一个元素，遵循先进先出（FIFO）原则。", category: "数据结构", favorite: false },
+ { term: "derives from", translation: "继承", explanation: "继承是面向对象编程的核心概念，允许一个类（子类）基于另一个类（父类）创建，继承其属性和方法。", category: "编程语言", favorite: false },
+ { term: "design pattern", translation: "设计模式", explanation: "设计模式是解决常见软件设计问题的可重用方案，提供最佳实践，提高代码质量和可维护性。", category: "设计模式", favorite: false },
+ { term: "Design Requirements Document", translation: "交互设计说明文档（DRD）", explanation: "交互设计说明文档（DRD）详细描述软件产品的设计需求、用户界面和交互流程，指导开发团队实现。", category: "软件工程", favorite: false },
+ { term: "device", translation: "设备", explanation: "设备指计算机系统中的物理或虚拟硬件组件，如打印机、传感器或存储设备，用于执行特定功能。", category: "硬件架构", favorite: false },
+ { term: "DFS", translation: "深度优先搜索", explanation: "深度优先搜索是一种图或树遍历算法，从起始节点深入探索分支直到尽头，再回溯继续搜索其他分支。", category: "算法", favorite: false },
+ { term: "DfT", translation: "为可测试性而设计", explanation: "DfT是一种在系统设计阶段就考虑测试需求的方法，旨在提高系统的可测试性，降低测试成本。", category: "软件工程", favorite: false },
+ { term: "DI", translation: "依赖注入（dependency injection）", explanation: "DI是一种设计模式，通过外部提供对象所需的依赖，而不是在对象内部创建，以提高代码的松耦合和可测试性。", category: "设计模式", favorite: false },
+ { term: "DIaaS", translation: "Data intelligence as a Service，数据智能即服务（出自2022年6月29日，阿里常规线上新品牌发布会）", explanation: "DIaaS是一种云计算服务模式，将数据智能能力（如数据分析、AI工具）作为服务提供，用户可按需使用。", category: "云计算", favorite: false },
+ { term: "diagnostics", translation: "诊断", explanation: "诊断指识别和定位计算机系统、软件或硬件中问题或故障的过程，常用于调试和维护。", category: "计算机基础", favorite: false },
+ { term: "directed graph", translation: "有向图", explanation: "有向图是一种图数据结构，其中边有方向，表示节点间的关系是单向的，常用于建模依赖关系。", category: "数据结构", favorite: false },
+ { term: "directive", translation: "指令", explanation: "指令是编程或计算机操作中的命令，告诉计算机执行特定任务，如汇编指令或模板引擎中的指令。", category: "计算机基础", favorite: false },
+ { term: "DiRT", translation: "灾难恢复测试（Disaster Recovery Test）", explanation: "DiRT是一种测试方法，模拟灾难场景以验证系统的恢复能力，确保在故障后能快速恢复正常运行。", category: "测试", favorite: false },
+ { term: "discussion forum", translation: "论坛", explanation: "论坛是一种在线讨论平台，用户可以在其中发布消息、回复帖子，进行交流和知识分享。", category: "其他", favorite: false },
+ { term: "disk", translation: "磁盘", explanation: "磁盘是计算机的存储设备，用于长期保存数据和程序，包括硬盘和固态硬盘等类型。", category: "硬件架构", favorite: false },
+ { term: "distributed system", translation: "分布式系统", explanation: "分布式系统是由多台计算机通过网络连接协同工作的系统，旨在提高性能、可靠性和可扩展性。", category: "计算机基础", favorite: false },
+ { term: "DLL", translation: "动态链接库（Dynamic Link Library）", explanation: "DLL是Windows操作系统中包含可被多个程序共享的代码和数据的文件，有助于节省内存和促进模块化开发。", category: "操作系统", favorite: false },
+ { term: "DNS", translation: "域名系统（Domain Name System）", explanation: "DNS是互联网中将域名（如www.example.com）转换为IP地址的系统，使得用户无需记忆复杂的数字地址。", category: "计算机网络", favorite: false },
+ { term: "Document Object Model", translation: "文档对象模型（DOM）", explanation: "DOM是HTML或XML文档的编程接口，将文档表示为树形结构，允许脚本动态访问和更新内容、结构和样式。", category: "前端开发", favorite: false },
+ { term: "domain-driven design", translation: "领域驱动设计（DDD）", explanation: "领域驱动设计是一种软件开发方法，强调通过深入理解业务领域来构建复杂系统，以提高代码质量和可维护性。", category: "软件工程", favorite: false },
+ { term: "Domain Event", translation: "领域事件", explanation: "领域事件是领域驱动设计中的概念，表示在业务领域中发生的重要事情，用于在系统组件间传递状态变化信息。", category: "软件工程", favorite: false },
+ { term: "Domain Model", translation: "领域模型", explanation: "领域模型是领域驱动设计的核心，抽象表示业务领域中的概念、规则和关系，作为软件实现的基础。", category: "软件工程", favorite: false },
+ { term: "Domain Name System", translation: "域名系统（DNS）", explanation: "域名系统是互联网中将域名转换为IP地址的分布式数据库系统，确保用户能通过易记的名称访问网站。", category: "计算机网络", favorite: false },
+ { term: "Domain Service", translation: "领域服务", explanation: "领域服务是领域驱动设计中的一种模式，用于封装不自然属于实体或值对象的业务逻辑，通常处理跨多个对象操作。", category: "软件工程", favorite: false },
+ { term: "Domain Specific Language", translation: "领域特定语言（DSL）", explanation: "领域特定语言是为特定应用领域设计的编程或描述语言，如SQL用于数据库查询，旨在提高该领域的表达效率。", category: "编程语言", favorite: false },
+ { term: "DRD", translation: "交互设计说明文档（Design Requirements Document）", explanation: "DRD是交互设计说明文档，详细描述软件产品的用户界面和交互需求，用于指导设计和开发团队实现一致的用户体验。", category: "软件工程", favorite: false },
+ { term: "DRY 原则", translation: "不自我重复原则（Don't Repeat Yourself），“不要重复你自己”", explanation: "DRY原则是软件开发中的核心原则，强调避免代码重复，通过抽象和复用提高可维护性和可读性。", category: "软件工程", favorite: false },
+ { term: "duck-typing", translation: "鸭子类型", explanation: "鸭子类型是一种动态类型系统，关注对象的行为而非类型，如果对象像鸭子一样叫和走，就视为鸭子。", category: "编程语言", favorite: false },
+ { term: "duck test", translation: "鸭子测试", explanation: "鸭子测试是一种基于观察的推理方法，用于判断对象是否属于某类别，常用于哲学和计算机科学中。", category: "计算机基础", favorite: false },
+ { term: "dummy function", translation: "虚构函数", explanation: "虚构函数是占位符函数，用于测试或开发阶段，模拟真实功能但不执行实际操作，便于代码构建。", category: "开发工具", favorite: false },
+ { term: "dump", translation: "转储", explanation: "转储指将内存或数据存储的内容输出到文件或其他介质，常用于调试、备份或分析系统状态。", category: "计算机基础", favorite: false },
+ { term: "Duplicate Abstraction", translation: "重复的抽象", explanation: "重复的抽象是代码坏味道，指系统中存在多个相似但独立的抽象，导致冗余和维护困难。", category: "软件工程", favorite: false },
+ { term: "Duplicate Observed Data", translation: "复制“被监视数据”", explanation: "复制被监视数据是设计模式，用于在用户界面和业务逻辑之间同步数据，常见于MVC架构中。", category: "设计模式", favorite: false },
+ { term: "durability", translation: "持久性", explanation: "持久性指数据在系统重启或故障后仍能保留的特性，是数据库和存储系统中的关键概念。", category: "数据库", favorite: false },
+ { term: "Dynamic Link Library", translation: "动态链接库（DLL）", explanation: "动态链接库是Windows系统中的可执行代码库，允许多个程序共享函数，减少内存占用和提高效率。", category: "操作系统", favorite: false },
+ { term: "EAP", translation: "早期评估版本（Early Assessment Program）", explanation: "早期评估版本是软件发布前的测试计划，让用户提前体验并提供反馈，以改进产品质量。", category: "软件工程", favorite: false },
+ { term: "EAP", translation: "基于事件的异步模式（Event-based Asynchronous Pattern）", explanation: "一种编程模式，允许对象在异步操作完成时通过事件通知调用者，常用于避免UI线程阻塞。", category: "编程语言", favorite: false },
+ { term: "Early Assessment Program", translation: "早期评估版本（EAP）", explanation: "软件发布前的早期测试版本，允许用户提前体验并提供反馈，以帮助改进最终产品。", category: "软件工程", favorite: false },
+ { term: "effect sketch", translation: "影响草图", explanation: "在用户界面设计中，用于快速展示设计变更对整体布局影响的草图或原型。", category: "前端开发", favorite: false },
+ { term: "Egress", translation: "流出", explanation: "指数据或流量从内部网络向外部网络传输的过程，常用于网络安全和云计算环境。", category: "网络安全", favorite: false },
+ { term: "elasticity", translation: "弹性", explanation: "云计算的核心特性之一，指系统能够根据需求动态调整资源（如计算、存储），以应对负载变化。", category: "云计算", favorite: false },
+ { term: "ELBs", translation: "弹性负载均衡器（Elastic Load Balancers）", explanation: "云计算服务中的负载均衡器，能自动分配流量到多个实例，提高应用可用性和弹性。", category: "云计算", favorite: false },
+ { term: "Element (XML)", translation: "元素", explanation: "XML文档中的基本组成单位，由开始标签、内容和结束标签构成，用于结构化数据表示。", category: "计算机基础", favorite: false },
+ { term: "Elvis Operator", translation: "埃尔维斯运算符", explanation: "一种简化空值检查的运算符，常见于某些编程语言（如Kotlin），语法为 ?:，用于提供默认值。", category: "编程语言", favorite: false },
+ { term: "Emergence", translation: "涌现、创发、突现、呈展、演生，是一种现象。", explanation: "复杂系统中由简单个体互动产生的整体性新行为或模式，常见于人工智能和系统理论。", category: "人工智能", favorite: false },
+ { term: "Encapsulate Collection", translation: "封装集合", explanation: "一种设计模式，通过封装集合的访问和修改，以控制数据一致性并减少外部依赖。", category: "设计模式", favorite: false },
+ { term: "Encapsulate Downset", translation: "封装向下转型", explanation: "封装向下转型是一种重构技术，将向下转型操作封装在方法中，以提高代码的类型安全性和可读性。", category: "软件工程", favorite: false },
+ { term: "Encapsulate Field", translation: "封装字段", explanation: "封装字段是一种重构技术，将类的字段设为私有，并通过公共方法（getter/setter）访问，以控制数据访问和修改。", category: "软件工程", favorite: false },
+ { term: "endpoint", translation: "端点", explanation: "端点是网络通信中的一个地址或接口，用于标识服务或资源的访问位置，如API的URL。", category: "计算机网络", favorite: false },
+ { term: "enqueue", translation: "入列；加入队列", explanation: "入列是队列操作，将元素添加到队列的末尾，遵循先进先出（FIFO）原则，常用于任务调度。", category: "数据结构", favorite: false },
+ { term: "Enterprise Resource Planning", translation: "企业资源计划（ERP）", explanation: "企业资源计划（ERP）是一种集成管理软件系统，用于协调企业各部门的资源、流程和数据，提高运营效率。", category: "软件工程", favorite: false },
+ { term: "entity", translation: "实体", explanation: "实体是数据模型中的对象，代表现实世界的事物，如数据库中的表或面向对象编程中的类实例。", category: "数据库", favorite: false },
+ { term: "Entity Tags", translation: "实体标签（ETag）", explanation: "实体标签（ETag）是HTTP协议中的标识符，用于缓存验证，表示资源的特定版本，帮助检测内容是否更改。", category: "计算机网络", favorite: false },
+ { term: "entourage anti-pattern", translation: "随从反模式", explanation: "随从反模式是一种不良设计，指类过度依赖其他类的方法，导致紧耦合和代码重复，降低可维护性。", category: "设计模式", favorite: false },
+ { term: "erosion", translation: "侵蚀", explanation: "侵蚀在图像处理中是一种形态学操作，用于缩小对象边界，去除小噪声或分离连接物体，基于结构元素。", category: "计算机基础", favorite: false },
+ { term: "Event-based Asynchronous Pattern", translation: "基于事件的异步模式（EAP）", explanation: "基于事件的异步模式（EAP）是.NET中的异步编程模型，使用事件处理异步操作完成，简化后台任务管理。", category: "编程语言", favorite: false },
+ { term: "event data pump", translation: "时间数据泵", explanation: "事件数据泵是一种软件架构模式，用于高效处理和分发事件流，通常用于实时数据处理和消息传递系统。", category: "软件工程", favorite: false },
+ { term: "event sourcing", translation: "事件源", explanation: "事件源是一种设计模式，通过记录所有状态变化的事件序列来持久化数据，而不是存储当前状态，便于追溯和重建状态。", category: "设计模式", favorite: false },
+ { term: "Evolvability", translation: "可进化性", explanation: "可进化性指软件系统能够适应未来变化和需求增长的能力，强调模块化和可扩展设计，以降低维护成本。", category: "软件工程", favorite: false },
+ { term: "exception handling", translation: "异常处理", explanation: "异常处理是编程中用于检测和响应错误或异常情况的机制，通过try-catch等结构确保程序稳定运行。", category: "编程语言", favorite: false },
+ { term: "Exclusive OR", translation: "异或（XOR）", explanation: "异或（XOR）是一种逻辑运算，当两个输入值不同时输出真，相同时输出假，常用于加密、校验和位操作。", category: "计算机基础", favorite: false },
+ { term: "explanatory figures", translation: "图示", explanation: "图示是通过图形、图表或示意图来解释复杂概念或数据的方法，帮助直观理解计算机系统或算法的工作原理。", category: "计算机基础", favorite: false },
+ { term: "Extensible Markup Language", translation: "可扩展标记语言（XML）", explanation: "可扩展标记语言（XML）是一种用于存储和传输数据的标记语言，具有自描述性，广泛用于配置文件和数据交换。", category: "计算机基础", favorite: false },
+ { term: "Extensibility", translation: "可扩展性", explanation: "可扩展性指系统能够通过增加资源（如硬件或模块）来提升性能或功能的能力，是软件设计的重要考量因素。", category: "软件工程", favorite: false },
+ { term: "extra large", translation: "特大型", explanation: "特大型通常指计算机系统或数据集的规模极大，如大数据处理或高性能计算中的超大规模集群或存储。", category: "云计算", favorite: false },
+ { term: "extra small", translation: "特小型", explanation: "特小型通常指微型计算机系统或设备，如嵌入式系统或物联网设备，具有低功耗和小尺寸的特点。", category: "硬件架构", favorite: false },
+ { term: "Extract Class", translation: "提炼类", explanation: "将过大或职责过多的类拆分为多个更小、更专注的类，以提高代码的可读性和可维护性。", category: "软件工程", favorite: false },
+ { term: "Extract Hierarchy", translation: "提炼继承体系", explanation: "在代码重构中，通过识别共性并建立继承关系（如父类和子类）来组织类层次结构。", category: "软件工程", favorite: false },
+ { term: "Extract Interface", translation: "提炼接口", explanation: "从现有类中提取出一组公共方法声明，形成一个接口，以支持多态和代码解耦。", category: "软件工程", favorite: false },
+ { term: "Extract Method", translation: "提炼函数", explanation: "将一段过长的代码块提取为一个独立的方法或函数，以提高代码的可读性和复用性。", category: "软件工程", favorite: false },
+ { term: "Extract Subclass", translation: "提炼子类", explanation: "从现有类中提取出特定行为或属性，创建一个新的子类，以实现更清晰的继承结构。", category: "软件工程", favorite: false },
+ { term: "Extract Superclass", translation: "提炼超类", explanation: "从多个相关类中提取共性，创建一个新的父类（超类），以促进代码复用和结构优化。", category: "软件工程", favorite: false },
+ { term: "eXtreme Programming", translation: "极限编程（XP）", explanation: "一种敏捷软件开发方法，强调快速反馈、持续集成、测试驱动开发和结对编程等实践。", category: "软件工程", favorite: false },
+ { term: "Facade Pattern", translation: "外观模式", explanation: "一种设计模式，为复杂的子系统提供一个统一的简化接口，使客户端更容易使用。", category: "设计模式", favorite: false },
+ { term: "Factory Method Pattern", translation: "工厂方法模式", explanation: "一种创建型设计模式，定义一个用于创建对象的接口，但让子类决定实例化哪个具体类。", category: "设计模式", favorite: false },
+ { term: "failover", translation: "容错转移", explanation: "当主系统发生故障时，自动切换到备用系统以维持服务可用性的过程，常用于高可用性架构。", category: "云计算", favorite: false },
+ { term: "failure domain", translation: "故障域", explanation: "故障域指系统中一个组件发生故障时可能影响的其他组件或服务的范围。在分布式系统中，通过隔离故障域可以限制故障的传播。", category: "硬件架构", favorite: false },
+ { term: "fake object", translation: "伪对象", explanation: "伪对象是在软件测试中使用的模拟对象，它模拟真实对象的行为，但不包含实际功能，主要用于隔离测试环境。", category: "测试", favorite: false },
+ { term: "fan-in", translation: "扇入", explanation: "扇入指一个模块或函数被其他模块调用的次数。高扇入表示该模块被广泛重用，通常意味着设计良好。", category: "软件工程", favorite: false },
+ { term: "fan-out", translation: "扇出", explanation: "扇出指一个模块或函数调用其他模块的数量。高扇出可能增加复杂性，需要合理控制以保持代码可维护性。", category: "软件工程", favorite: false },
+ { term: "fat client", translation: "胖客户端", explanation: "胖客户端是指在本地处理大部分业务逻辑和数据的客户端应用，对服务器依赖较小，但更新和维护可能较复杂。", category: "前端开发", favorite: false },
+ { term: "FCL", translation: ".NET Framework 类库（Framework Class Library）", explanation: ".NET Framework 类库是微软提供的一组可重用类、接口和值类型，用于开发.NET应用程序，涵盖基础功能如文件操作和网络通信。", category: "编程语言", favorite: false },
+ { term: "FDD", translation: "软盘（Floppy Disk Drive）", explanation: "软盘是一种早期的可移动存储设备，使用磁性介质存储数据，容量较小，现已基本被USB闪存等替代。", category: "硬件架构", favorite: false },
+ { term: "feature sketch", translation: "特性草图", explanation: "特性草图是软件开发中用于快速可视化新功能或界面设计的简单绘图，帮助团队讨论和迭代想法。", category: "软件工程", favorite: false },
+ { term: "feed", translation: "聚合（资源聚合）", explanation: "聚合指从多个来源收集内容（如新闻、社交媒体更新）并集中展示的技术，用户可以通过订阅源获取最新信息。", category: "前端开发", favorite: false },
+ { term: "fine-tuning", translation: "微调", explanation: "微调是在机器学习中，对预训练模型进行小规模调整以适应特定任务或数据集的过程，以提高模型性能。", category: "机器学习", favorite: false },
+ { term: "first-party", translation: "第一方", explanation: "指由产品制造商或服务提供商直接提供的软件、服务或数据，与第三方相对，通常更受信任且集成度更高。", category: "软件工程", favorite: false },
+ { term: "Floopy Disk Drive", translation: "软盘（FDD）", explanation: "一种早期的计算机存储设备，使用可移动的软磁盘来读写数据，容量较小，现已基本被U盘和云存储取代。", category: "硬件架构", favorite: false },
+ { term: "Flyweight Pattern", translation: "享元模式", explanation: "一种设计模式，通过共享大量细粒度对象来减少内存使用，适用于需要创建大量相似对象的场景。", category: "设计模式", favorite: false },
+ { term: "follow up", translation: "跟进", explanation: "在项目管理或沟通中，指后续的跟进行动，如检查进度、回复问题或推动任务完成，以确保事项得到处理。", category: "项目管理", favorite: false },
+ { term: "foreign key", translation: "外键", explanation: "数据库中的一个字段，用于建立表与表之间的关联，它引用另一张表的主键，确保数据的一致性和完整性。", category: "数据库", favorite: false },
+ { term: "Form Template Method", translation: "塑造模板函数", explanation: "一种重构方法，通过提取相似操作到模板函数中，消除子类中的重复代码，提高代码的可维护性和复用性。", category: "软件工程", favorite: false },
+ { term: "format item", translation: "格式项", explanation: "在格式化输出中，指占位符或标记，用于指定如何插入和显示变量值，例如在C#中的{0}表示第一个参数。", category: "编程语言", favorite: false },
+ { term: "format string", translation: "格式字符串", explanation: "一种包含格式项的特殊字符串，用于控制数据的输出格式，常见于编程中，如printf函数的第一个参数。", category: "编程语言", favorite: false },
+ { term: "forward", translation: "转发", explanation: "在计算机网络中，指将接收到的数据包或消息发送到下一个目的地，常见于路由器、代理服务器或邮件传输。", category: "计算机网络", favorite: false },
+ { term: "FPP", translation: "零售版（Full Packaged Product）", explanation: "指软件的零售完整包装产品，通常包含安装介质、许可证和文档，与试用版或升级版相对。", category: "软件工程", favorite: false },
+ { term: "Framework Class Library", translation: ".NET Framework 类库（FCL）", explanation: ".NET Framework 类库（FCL）是微软.NET框架中的一组预定义类、接口和值类型，用于支持应用程序开发，提供通用功能如文件操作、数据访问和用户界面。", category: "编程语言", favorite: false },
+ { term: "FRD", translation: "功能需求文档（Functional Requirements Document）", explanation: "功能需求文档（FRD）是软件工程中的文档，详细描述系统应实现的功能和行为，帮助开发团队理解用户需求，确保软件符合预期目标。", category: "软件工程", favorite: false },
+ { term: "free", translation: "免费", explanation: "免费指软件或服务无需付费即可使用，通常基于开源或商业策略，但可能有限制如功能缩减或广告支持，以促进普及或吸引用户。", category: "其他", favorite: false },
+ { term: "free function", translation: "自由函数", explanation: "自由函数是编程中不属于任何类或对象的独立函数，通常用于C++等语言，提供通用操作而不依赖于特定实例，增强代码模块化。", category: "编程语言", favorite: false },
+ { term: "Functional Requirements Document", translation: "功能需求文档（FRD）", explanation: "功能需求文档（FRD）是软件工程中的文档，详细描述系统应实现的功能和行为，帮助开发团队理解用户需求，确保软件符合预期目标。", category: "软件工程", favorite: false },
+ { term: "full-duplex", translation: "全双工", explanation: "全双工是计算机网络中的通信模式，允许数据同时在两个方向上传输，提高效率，常见于以太网和电话系统，支持双向实时交互。", category: "计算机网络", favorite: false },
+ { term: "Full Packaged Product", translation: "零售版（FPP）", explanation: "零售版（FPP）是软件的一种分发形式，通常指完整包装产品，用户购买后可在单台计算机上安装和使用，适用于个人或商业场景。", category: "软件工程", favorite: false },
+ { term: "Function Pointers", translation: "函数指针", explanation: "函数指针是编程语言中的变量，存储函数的地址，允许动态调用不同函数，常用于回调机制和事件处理，增强代码灵活性。", category: "编程语言", favorite: false },
+ { term: "Garbage Collection", translation: "垃圾回收器（GC）", explanation: "垃圾回收器（GC）是编程语言中的自动内存管理机制，用于回收不再使用的对象内存，防止内存泄漏，常见于Java和C#等语言。", category: "编程语言", favorite: false },
+ { term: "gauge", translation: "计量表", explanation: "计量表是计算机系统中的工具，用于测量和监控资源使用情况，如网络流量或CPU负载，帮助优化性能和诊断问题。", category: "开发工具", favorite: false },
+ { term: "GC Heap", translation: "垃圾回收堆", explanation: "GC Heap是托管内存中用于存储对象实例的区域，由垃圾回收器自动管理，负责分配和回收内存空间。", category: "编程语言", favorite: false },
+ { term: "GC root", translation: "GC 根对象", explanation: "GC root是垃圾回收过程中的根对象，如全局变量或活动线程栈中的引用，用于确定哪些对象可达，避免被回收。", category: "编程语言", favorite: false },
+ { term: "Generalization", translation: "泛化", explanation: "泛化是面向对象编程中的概念，指从具体类中提取共性形成更通用的父类或接口，以促进代码复用和扩展。", category: "软件工程", favorite: false },
+ { term: "Generalized Async", translation: "通用异步", explanation: "通用异步是一种编程模式，允许异步操作以类型安全的方式处理不同返回类型，提升代码灵活性和可维护性。", category: "编程语言", favorite: false },
+ { term: "Generalized Async Return", translation: "通用异步返回（C# 7.0）", explanation: "通用异步返回是C# 7.0特性，使异步方法能返回除Task外的类型，如ValueTask，优化性能并减少内存分配。", category: "编程语言", favorite: false },
+ { term: "generalizing specialist", translation: "全科专家（敏捷开发术语）", explanation: "全科专家指在敏捷开发中具备广泛技能和深度专业知识的成员，能跨领域协作，提升团队适应性和效率。", category: "项目管理", favorite: false },
+ { term: "generator", translation: "生成器", explanation: "生成器是一种特殊函数，能按需生成值序列，支持惰性求值，常用于迭代器模式，节省内存并提高性能。", category: "编程语言", favorite: false },
+ { term: "Generic Attributes", translation: "泛型特性", explanation: "泛型特性允许在C#等语言中定义可应用于多种数据类型的特性（Attribute），增强代码的通用性和类型安全。", category: "编程语言", favorite: false },
+ { term: "Generic Math", translation: "泛型数学", explanation: "泛型数学支持对数值类型进行通用数学运算，通过接口约束实现跨类型计算，提升代码复用和类型安全性。", category: "编程语言", favorite: false },
+ { term: "Geo-Replication", translation: "地域复制", explanation: "地域复制是一种数据复制技术，将数据跨多个地理区域同步存储，以提高可用性、容灾能力和访问性能。", category: "数据库", favorite: false },
+ { term: "Geo Redundant", translation: "地域冗余", explanation: "地域冗余是一种数据存储策略，将数据副本存储在不同地理位置的数据中心，以提高可用性和灾难恢复能力。", category: "云计算", favorite: false },
+ { term: "Global Assembly Cache", translation: "全局程序集缓存（GAC）", explanation: "全局程序集缓存是.NET框架中的一个共享存储库，用于存储多个应用程序共享的程序集，便于版本管理和部署。", category: "开发工具", favorite: false },
+ { term: "global state", translation: "全局状态", explanation: "全局状态指在程序运行期间，可以被所有模块或函数访问和修改的变量或数据，常用于共享配置或状态信息。", category: "编程语言", favorite: false },
+ { term: "global using directives", translation: "全局 Using 指令", explanation: "全局Using指令是C#中的特性，允许在项目中一次性导入命名空间，避免在每个文件中重复编写using语句。", category: "编程语言", favorite: false },
+ { term: "Goal Directed Design", translation: "目标导向设计，旨在处理并满足用户目标和动机，包含产品目标和用户目标", explanation: "目标导向设计是一种设计方法，专注于理解用户目标和动机，结合产品目标来创建满足需求的用户体验和功能。", category: "软件工程", favorite: false },
+ { term: "GoT", translation: "思维图，思维图谱（Graph-of-Thought） ", explanation: "思维图是一种人工智能技术，通过构建思维图谱来模拟人类推理过程，提升模型在复杂任务中的逻辑和连贯性。", category: "人工智能", favorite: false },
+ { term: "GPT-3", translation: "Generative Pre-trained Transformer 3，是 OpenAI 最著名的 LLM 之一 ，拥有1750亿个参数", explanation: "GPT-3是OpenAI开发的大型语言模型，拥有1750亿参数，擅长文本生成、翻译等任务，推动了自然语言处理的发展。", category: "人工智能", favorite: false },
+ { term: "Graph-of-Thought", translation: "思维图，思维图谱（GoT） ", explanation: "思维图谱是一种人工智能方法，通过图形结构组织思维过程，帮助模型更有效地处理复杂推理和决策任务。", category: "人工智能", favorite: false },
+ { term: "Graphical User Interface", translation: "图像用户界面设计（GUI）", explanation: "图形用户界面设计是指通过视觉元素（如图标、窗口）与用户交互的界面设计，使软件操作更直观和易于使用。", category: "前端开发", favorite: false },
+ { term: "GUI", translation: "图像用户界面设计（Graphical User Interface）", explanation: "GUI是图形用户界面的缩写，提供视觉化的操作环境，用户通过点击、拖拽等动作与计算机程序进行交互。", category: "前端开发", favorite: false },
+ { term: "Hackable", translation: "修改方便（根据《Web API 设计与开发》一书之翻译）", explanation: "指软件或系统易于被修改、扩展或定制，通常通过提供清晰的接口和模块化设计实现，允许开发者按需调整功能。", category: "软件工程", favorite: false },
+ { term: "HAL", translation: "超文本应用程序语言（Hypertext Application Language）", explanation: "一种用于构建超媒体驱动的API的规范，通过资源表示中的链接来驱动应用程序状态，促进客户端与服务器的松耦合交互。", category: "后端开发", favorite: false },
+ { term: "handle", translation: "句柄", explanation: "在计算机中，句柄是一个抽象引用或标识符，用于代表资源（如文件、窗口或对象），简化对系统资源的访问和管理。", category: "计算机基础", favorite: false },
+ { term: "Hard Disk Drive", translation: "硬盘（HDD）", explanation: "一种使用旋转磁盘和磁头进行数据存储的非易失性存储设备，提供大容量但速度较慢，常用于长期数据保存。", category: "硬件架构", favorite: false },
+ { term: "HATEOAS", translation: "超媒体作为程序状态的引擎（Hypermedia As The Engine Of Application State）", explanation: "REST架构的一个约束，客户端通过超媒体链接动态发现和导航应用程序状态，无需预先了解API结构，实现高度可演化性。", category: "后端开发", favorite: false },
+ { term: "HCI", translation: "人机交互（Human-Computer Interaction）", explanation: "研究人与计算机之间交互的学科，关注界面设计、用户体验和可用性，旨在使技术更直观、高效和人性化。", category: "计算机基础", favorite: false },
+ { term: "HDD", translation: "硬盘（Hard Disk Drive）", explanation: "硬盘的缩写，是一种机械式存储设备，利用旋转盘片和磁头读写数据，适合大容量存储但访问速度相对较慢。", category: "硬件架构", favorite: false },
+ { term: "header", translation: "头；标头；表头", explanation: "在数据通信或文件中，头是位于主体之前的元数据部分，包含控制信息如格式、大小或协议细节，用于指导处理过程。", category: "计算机网络", favorite: false },
+ { term: "Hexagonal Architecture", translation: "六边形架构4，由 Alistair Cockburn 提出", explanation: "一种软件架构模式，将核心业务逻辑置于中心，通过端口和适配器与外部系统（如UI或数据库）隔离，提高可测试性和灵活性。", category: "设计模式", favorite: false },
+ { term: "HMAC", translation: "基于哈希的小系列码（Hash-based Message Authentication）", explanation: "一种基于哈希函数和密钥的消息认证码技术，用于验证消息的完整性和真实性，防止数据在传输过程中被篡改或伪造。", category: "网络安全", favorite: false },
+ { term: "Hide Delegate", translation: "隐藏“委托关系”", explanation: "一种设计模式，通过封装对委托对象的直接访问，减少客户端与委托对象之间的耦合，使客户端只需与中介对象交互。", category: "设计模式", favorite: false },
+ { term: "Hide Method", translation: "隐藏函数", explanation: "一种代码重构技术，将只在类内部使用的方法设为私有，以隐藏实现细节，简化接口并提高代码的可维护性。", category: "软件工程", favorite: false },
+ { term: "High Avaliability", translation: "高可用性", explanation: "系统或服务能够长时间持续运行而不中断的能力，通常通过冗余设计、故障转移和负载均衡等技术实现。", category: "云计算", favorite: false },
+ { term: "High Fidelity Prototype", translation: "高保真原型，细节都比较详细的原型", explanation: "一种用户界面原型，具有高度详细的视觉和交互设计，接近最终产品的外观和功能，用于测试和演示。", category: "软件工程", favorite: false },
+ { term: "high surrogate", translation: "高位代理项", explanation: "在Unicode编码中，用于表示辅助平面字符的代理对的一部分，范围在U+D800到U+DBFF之间，与低位代理项配对使用。", category: "计算机基础", favorite: false },
+ { term: "Homogeneous", translation: "同质化", explanation: "指系统或组件由相同类型或结构的元素组成，例如同质化集群中的服务器配置一致，便于管理和扩展。", category: "计算机基础", favorite: false },
+ { term: "hook", translation: "钩子", explanation: "一种编程技术，通过在代码中插入特定点（钩子点），允许外部代码拦截或扩展原有功能，常用于事件处理和插件系统。", category: "编程语言", favorite: false },
+ { term: "hook point", translation: "挂接点", explanation: "代码中预定义的位置，允许外部程序或插件通过钩子（hook）插入自定义逻辑，以修改或增强系统行为。", category: "编程语言", favorite: false },
+ { term: "Horizontal Scale", translation: "水平缩放", explanation: "通过增加更多服务器实例来扩展系统处理能力的方法，以提高性能和负载能力，常用于分布式系统。", category: "云计算", favorite: false },
+ { term: "Hosting", translation: "宿主", explanation: "指为应用程序或服务提供运行环境的过程，例如Web托管服务将网站部署在服务器上，使其可通过互联网访问。", category: "后端开发", favorite: false },
+ { term: "Hub-like Modularization", translation: "轮毂式模块化", explanation: "一种软件架构模式，将核心功能集中在一个中心模块（轮毂）中，其他模块通过该中心进行通信和协调，提高模块间的解耦和可维护性。", category: "软件工程", favorite: false },
+ { term: "HUI", translation: "手持设备用户界面，包括手机端和车载导航等（Handset User Interface）", explanation: "指手持设备（如手机、车载导航系统）的用户界面设计，关注在小屏幕或特定环境下提供直观、易用的交互体验。", category: "移动开发", favorite: false },
+ { term: "Human-Computer Interaction", translation: "人机交互（HCI）", explanation: "研究人与计算机之间交互的学科，涉及界面设计、用户体验和交互技术，旨在使计算机系统更易用、高效和人性化。", category: "计算机基础", favorite: false },
+ { term: "Humane Registry", translation: "人文注册表（由 Martin Fowler 提出）", explanation: "由 Martin Fowler 提出的概念，强调在软件系统中以人性化的方式管理配置和注册信息，避免硬编码，提高灵活性和可维护性。", category: "软件工程", favorite: false },
+ { term: "Hybrid Cloud", translation: "混合云", explanation: "结合公有云和私有云的云计算模式，允许数据和应用程序在两者之间共享，提供灵活性、安全性和成本效益。", category: "云计算", favorite: false },
+ { term: "hypertext-driven", translation: "超文本驱动", explanation: "一种软件设计理念，强调以超文本（如链接）作为核心驱动机制，常见于 Web 应用程序中，通过超链接导航和连接资源。", category: "前端开发", favorite: false },
+ { term: "HyperText Markup Language", translation: "超文本标记语言（HTML）", explanation: "用于创建网页的标准标记语言，通过标签定义文本、图像等内容的结构和呈现，是 Web 开发的基础技术之一。", category: "前端开发", favorite: false },
+ { term: "IA", translation: "信息架构（Information Architect）；", explanation: "信息架构，指组织和设计信息结构的过程，确保用户能高效地查找和理解内容，常用于网站或应用设计。", category: "前端开发", favorite: false },
+ { term: "Iaas", translation: "设施即服务（Infrastructure as a Service）", explanation: "基础设施即服务，云计算服务模型之一，提供虚拟化的计算资源（如服务器、存储），用户按需租用，无需管理物理硬件。", category: "云计算", favorite: false },
+ { term: "Idempotence", translation: "幂等性", explanation: "幂等性，指一个操作多次执行与一次执行的效果相同，常用于网络请求或数据库操作，确保系统在重复调用时的可靠性。", category: "计算机基础", favorite: false },
+ { term: "Idempotent Operation", translation: "幂等操作", explanation: "指执行一次或多次操作，结果都相同的操作。常用于网络请求和数据库操作，确保重复执行不会产生副作用。", category: "软件工程", favorite: false },
+ { term: "Identity Provider", translation: "身份提供方", explanation: "负责管理和验证用户身份的系统或服务，如单点登录（SSO）中的认证中心，用于颁发身份令牌。", category: "网络安全", favorite: false },
+ { term: "IL", translation: "中间语言（intermediate language）", explanation: "介于高级编程语言和机器代码之间的中间表示形式，如.NET中的CIL或Java中的字节码，便于跨平台执行。", category: "编程语言", favorite: false },
+ { term: "Illegitimate Injection", translation: "非法注入", explanation: "指未经授权的代码或数据注入攻击，如SQL注入或命令注入，旨在破坏系统安全或窃取信息。", category: "网络安全", favorite: false },
+ { term: "IM", translation: "即时通讯（Instant Messaging）", explanation: "允许用户实时交换文本、音频或视频消息的通信技术，如微信或Slack，依赖于网络协议实现即时性。", category: "计算机网络", favorite: false },
+ { term: "image", translation: "映像", explanation: "指计算机系统中文件或数据的完整副本，如操作系统映像或容器映像，用于快速部署或恢复环境。", category: "操作系统", favorite: false },
+ { term: "immersion approach", translation: "沉浸法", explanation: "一种学习方法，通过完全沉浸在目标环境或语境中（如语言学习或编程实践）来加速技能掌握。", category: "其他", favorite: false },
+ { term: "Imperative Abstraction", translation: "命令式抽象", explanation: "通过命令式编程风格（如顺序执行和状态变更）实现的抽象，隐藏底层细节，但强调操作步骤。", category: "编程语言", favorite: false },
+ { term: "in-context learning", translation: "上下文学习 ", explanation: "机器学习中的一种技术，模型通过少量示例或上下文提示来学习任务，而无需大量额外训练数据。", category: "机器学习", favorite: false },
+ { term: "Incomplete Abstraction", translation: "不完整的抽象", explanation: "指抽象设计未能完全隐藏底层复杂性或遗漏关键细节，导致使用困难或容易出错，常见于软件架构中。", category: "软件工程", favorite: false },
+ { term: "index", translation: "索引", explanation: "索引是数据库中用于快速查找数据的数据结构，类似于书籍的目录，能显著提高查询效率。", category: "数据库", favorite: false },
+ { term: "Information Architect", translation: "信息架构（IA）", explanation: "信息架构师负责组织和设计信息结构，确保用户能高效地查找和理解内容，常见于网站和软件设计。", category: "软件工程", favorite: false },
+ { term: "Infrastructure as a Service", translation: "设施即服务（Iaas）", explanation: "设施即服务是云计算模型，提供虚拟化的计算资源如服务器和存储，用户按需租用而无需管理物理硬件。", category: "云计算", favorite: false },
+ { term: "ingesting", translation: "摄取", explanation: "摄取指将数据从外部源导入到系统或数据库中进行处理和分析的过程，常用于大数据和数据处理场景。", category: "数据库", favorite: false },
+ { term: "ingress", translation: "流入", explanation: "流入指数据或网络流量进入系统或网络的过程，在云计算和网络安全中常涉及流量管理和控制。", category: "计算机网络", favorite: false },
+ { term: "Inline Class", translation: "将类内联化", explanation: "将类内联化是重构技术，将小类的功能直接移到使用它的类中，以减少不必要的类层次，简化代码结构。", category: "设计模式", favorite: false },
+ { term: "Inline Method", translation: "内联函数", explanation: "内联函数是重构方法，将函数调用替换为函数体本身，以减少函数开销并简化代码，适用于简单函数。", category: "设计模式", favorite: false },
+ { term: "Inline Temp", translation: "内联临时变量", explanation: "内联临时变量是重构技巧，将只使用一次的临时变量直接替换为其表达式，使代码更简洁易读。", category: "设计模式", favorite: false },
+ { term: "input endpoint", translation: "输入端点", explanation: "输入端点是系统或网络中接收外部数据或请求的接口，常用于云计算和网络服务中定义访问点。", category: "计算机网络", favorite: false },
+ { term: "instance", translation: "实例", explanation: "实例是类或模板在运行时的具体对象，在面向对象编程和云计算中表示资源的具体实现。", category: "计算机基础", favorite: false },
+ { term: "Instance InputEndpoint", translation: "实例输入端点", explanation: "Instance InputEndpoint是云计算中虚拟机实例的网络端点，用于接收外部网络流量，通常与负载均衡器或防火墙规则关联。", category: "云计算", favorite: false },
+ { term: "Instant Messaging", translation: "即时通讯（IM）", explanation: "Instant Messaging（即时通讯）是一种实时在线通信技术，允许用户通过互联网发送文本、语音或视频消息，如微信或Slack。", category: "计算机网络", favorite: false },
+ { term: "instantiation", translation: "实例化", explanation: "实例化是面向对象编程中根据类创建具体对象的过程，将类的抽象定义转化为内存中的实际实例。", category: "编程语言", favorite: false },
+ { term: "instantiator", translation: "实例化器", explanation: "实例化器是负责执行实例化操作的组件或工具，在编程中可能指工厂类或构造函数，用于生成对象实例。", category: "编程语言", favorite: false },
+ { term: "instruction fine-tuning", translation: "指令微调", explanation: "指令微调是机器学习中针对特定任务对预训练模型进行进一步训练的过程，通过指令数据优化模型输出。", category: "机器学习", favorite: false },
+ { term: "Insufficient Modularization", translation: "不充分的模块化", explanation: "不充分的模块化是软件设计中模块划分不足的问题，导致代码耦合度高、可维护性差，影响系统扩展性。", category: "软件工程", favorite: false },
+ { term: "Interaction-based testing", translation: "基于交互的测试", explanation: "基于交互的测试是一种测试方法，关注组件间的交互行为，验证系统各部分在协作时是否符合预期。", category: "测试", favorite: false },
+ { term: "Intercept", translation: "截取", explanation: "截取是在编程中拦截并处理方法调用或事件的过程，常用于实现日志记录、权限检查或性能监控等功能。", category: "编程语言", favorite: false },
+ { term: "interception point", translation: "拦截点：可以编写测试来感知某些条件的地方", explanation: "拦截点是系统中可以插入自定义代码的位置，用于在特定条件触发时执行额外操作，如测试中的检查点。", category: "测试", favorite: false },
+ { term: "intermediate language", translation: "中间语言（IL）", explanation: "中间语言（IL）是一种介于高级语言和机器码之间的低级语言，由编译器生成，用于跨平台执行或进一步优化。", category: "编程语言", favorite: false },
+ { term: "Internal Endpoint", translation: "内部端点", explanation: "内部端点指在私有网络内部使用的服务访问点，通常不对外公开，用于内部系统间的通信。", category: "计算机网络", favorite: false },
+ { term: "Internet Information Service", translation: "Internet 信息服务（IIS）", explanation: "Internet Information Service（IIS）是微软开发的Web服务器软件，用于托管网站、应用程序和服务，支持HTTP、FTP等协议。", category: "后端开发", favorite: false },
+ { term: "Internet Protocol", translation: "互联网协议（IP）", explanation: "互联网协议（IP）是计算机网络中用于寻址和路由数据包的核心协议，确保数据能在不同网络间传输。", category: "计算机网络", favorite: false },
+ { term: "Interpreter Pattern", translation: "解释器模式", explanation: "解释器模式是一种行为设计模式，用于定义语言的文法表示，并解释执行语句，常用于实现简单语言或表达式求值。", category: "设计模式", favorite: false },
+ { term: "interpolated strings", translation: "内插字符串", explanation: "内插字符串是一种编程特性，允许在字符串中直接嵌入变量或表达式，简化字符串拼接，提高代码可读性。", category: "编程语言", favorite: false },
+ { term: "Introduce Assertion", translation: "引入断言", explanation: "引入断言是一种重构技术，在代码中添加条件检查以验证假设，帮助调试和确保程序正确性。", category: "软件工程", favorite: false },
+ { term: "Introduce Explaining Variable", translation: "引入解释性变量", explanation: "引入解释性变量是一种重构技术，将复杂表达式的结果赋给临时变量，以增强代码可读性和可维护性。", category: "软件工程", favorite: false },
+ { term: "Introduce Foreign Method", translation: "引入外加函数", explanation: "引入外加函数是一种重构技术，当需要为某个类添加方法但无法修改时，创建一个新函数来扩展功能。", category: "软件工程", favorite: false },
+ { term: "Introduce Local Extension", translation: "引入本地扩展", explanation: "引入本地扩展是一种重构技术，通过创建新类来扩展现有类的功能，避免直接修改原始代码。", category: "软件工程", favorite: false },
+ { term: "Introduce Null Object", translation: "引入 Null 对象", explanation: "引入Null对象是一种重构技术，用特定对象代替null值，避免空指针异常，简化代码中的空值检查。", category: "软件工程", favorite: false },
+ { term: "Introduce Parameter Object", translation: "引入参数对象", explanation: "一种重构技术，将多个相关参数封装成一个对象，以提高代码可读性和可维护性。", category: "软件工程", favorite: false },
+ { term: "Intrusion Detection Systems", translation: "入侵检测系统（IDS）", explanation: "监控网络或系统活动，检测恶意行为或策略违规的安全系统，通常用于报警。", category: "网络安全", favorite: false },
+ { term: "Intrusion Prevention Systems", translation: "入侵预防系统（IPS）", explanation: "主动阻止检测到的网络攻击或安全威胁的安全系统，比IDS更积极，可实时干预。", category: "网络安全", favorite: false },
+ { term: "Inversion of Control", translation: "控制反转（IoC）", explanation: "一种设计原则，将对象的创建和依赖管理交给外部容器控制，以降低组件耦合度。", category: "设计模式", favorite: false },
+ { term: "Isolation", translation: "隔离性", explanation: "数据库事务的ACID特性之一，确保并发事务执行时互不干扰，每个事务独立运行。", category: "数据库", favorite: false },
+ { term: "isomorphism", translation: "同构（数学领域专用术语）", explanation: "数学中两个结构在某种变换下保持相同性质的映射关系，常用于图论或代数领域。", category: "计算机基础", favorite: false },
+ { term: "iterable", translation: "可迭代的", explanation: "指对象可以被遍历（如使用for循环），通常实现了__iter__()方法，返回一个迭代器。", category: "编程语言", favorite: false },
+ { term: "iteration", translation: "迭代", explanation: "重复执行一系列操作的过程，常用于循环或递归中，以逐步接近目标结果。", category: "编程语言", favorite: false },
+ { term: "iterator", translation: "迭代器", explanation: "一种对象，用于顺序访问集合中的元素，通常提供next()方法获取下一个值。", category: "编程语言", favorite: false },
+ { term: "Iterator Pattern", translation: "迭代模式", explanation: "一种设计模式，提供统一的方法顺序访问聚合对象中的元素，而不暴露其内部表示。", category: "设计模式", favorite: false },
+ { term: "iterator protocol", translation: "迭代器协议", explanation: "迭代器协议是一种允许对象按顺序访问其元素的标准方法，定义了如何遍历数据集合，常见于Python等语言中。", category: "编程语言", favorite: false },
+ { term: "Job", translation: "作业", explanation: "作业在计算机中通常指操作系统或分布式系统中分配给处理器执行的任务单元，用于管理资源分配和调度。", category: "操作系统", favorite: false },
+ { term: "Job Description", translation: "岗位描述（JD）", explanation: "岗位描述（JD）是软件工程中用于定义职位职责、技能要求和期望的文档，帮助招聘和团队管理。", category: "软件工程", favorite: false },
+ { term: "JOSE", translation: "JSON 对象签名和加密", explanation: "JOSE是一组标准，用于在JSON对象中安全地签名和加密数据，确保网络传输中的完整性和机密性。", category: "计算机网络", favorite: false },
+ { term: "Json Web Token", translation: "JSON Web 令牌", explanation: "JSON Web令牌是一种开放标准，用于在网络应用间安全传输信息作为JSON对象，常用于身份验证和授权。", category: "计算机网络", favorite: false },
+ { term: "just-in-time compilation", translation: "即时编译，JIT 编译", explanation: "即时编译是一种程序优化技术，在运行时将代码编译为机器码以提高执行速度，常见于Java和JavaScript中。", category: "编程语言", favorite: false },
+ { term: "JVM", translation: "Java 虚拟机（Java Virtual Machine）", explanation: "Java虚拟机是一个软件层，用于执行Java字节码，提供跨平台兼容性，并管理内存和垃圾回收等任务。", category: "编程语言", favorite: false },
+ { term: "Key", translation: "密钥", explanation: "密钥是密码学中用于加密、解密或签名数据的秘密字符串，确保信息的安全性和身份验证。", category: "网络安全", favorite: false },
+ { term: "key-event notification", translation: "键事件通知", explanation: "键事件通知是用户界面编程中的机制，当键盘按键被按下或释放时，系统发送消息以触发相应操作。", category: "前端开发", favorite: false },
+ { term: "Key Opinion Leader", translation: "关键意见领袖（KOL），俗称大 V", explanation: "关键意见领袖是在社交媒体或特定领域有影响力的个人，常用于市场营销和产品推广，俗称大V。", category: "其他", favorite: false },
+ { term: "Key Performance Indicator", translation: "关键绩效考核指标（KPI）", explanation: "关键绩效考核指标，用于衡量组织、团队或个人在特定目标上的表现和进展，是评估绩效的重要量化工具。", category: "项目管理", favorite: false },
+ { term: "Key Space", translation: "键空间", explanation: "在密码学或数据库中，指所有可能的密钥或键的集合，用于加密、解密或数据索引操作。", category: "计算机基础", favorite: false },
+ { term: "key-space notification", translation: "键空间通知", explanation: "在Redis等数据库中，当键空间发生事件（如键被删除或修改）时，系统自动发送通知的机制。", category: "数据库", favorite: false },
+ { term: "Key-Value Pair", translation: "键-值对", explanation: "一种基本的数据结构，由唯一的键和对应的值组成，常用于字典、哈希表或配置存储中。", category: "数据结构", favorite: false },
+ { term: "KISS 原则", translation: "保持简单原则（Keep It Simple Silly），“简单是一切之本”", explanation: "软件设计原则，强调系统应保持简单、易于理解和维护，避免不必要的复杂性。", category: "软件工程", favorite: false },
+ { term: "KPI", translation: "关键绩效考核指标（Key Performance Indicator）", explanation: "关键绩效考核指标，用于量化评估绩效，帮助组织监控目标达成情况并做出决策。", category: "项目管理", favorite: false },
+ { term: "Language Integrated Query", translation: "语言集成查询（LINQ）", explanation: ".NET框架中的技术，允许在C#等语言中直接使用类似SQL的查询语法来操作数据集合。", category: "编程语言", favorite: false },
+ { term: "Large", translation: "大型", explanation: "在软件开发中，指系统或组件的规模较大，通常涉及复杂功能、高负载或大量代码。", category: "软件工程", favorite: false },
+ { term: "Large Language Model", translation: "大型语言模型（LLM） ", explanation: "基于大量文本数据训练的人工智能模型，能够理解和生成自然语言，如GPT系列模型。", category: "人工智能", favorite: false },
+ { term: "Layered Architecture", translation: "分层架构", explanation: "一种软件架构模式，将系统划分为多个层次（如表示层、业务逻辑层、数据层），每层有特定职责。", category: "软件工程", favorite: false },
+ { term: "LDAP", translation: "Lightweight Directory Access Protocol，轻型目录访问协议", explanation: "LDAP是一种用于访问和维护分布式目录服务的网络协议，常用于企业用户身份验证和资源管理。", category: "计算机网络", favorite: false },
+ { term: "Leaky Encapsulation", translation: "泄露的封装", explanation: "泄露的封装指面向对象编程中，类的内部实现细节意外暴露给外部，破坏了封装性原则，可能导致代码脆弱。", category: "软件工程", favorite: false },
+ { term: "Legacy system", translation: "遗留系统", explanation: "遗留系统指仍在使用的旧计算机系统、软件或技术，通常难以维护或升级，但对企业运营至关重要。", category: "软件工程", favorite: false },
+ { term: "license", translation: "许可证", explanation: "许可证是法律文件，规定软件、技术或内容的使用权限、限制和条件，确保合规使用和保护知识产权。", category: "软件工程", favorite: false },
+ { term: "lifetime", translation: "生命周期", explanation: "生命周期指软件、对象或资源从创建到销毁的整个过程，包括初始化、使用和清理等阶段。", category: "软件工程", favorite: false },
+ { term: "Lightweight Directory Access Protocol", translation: "轻量级目录访问协议（LDAP）", explanation: "轻量级目录访问协议（LDAP）是简化版的目录访问协议，用于查询和修改目录服务，如用户信息存储。", category: "计算机网络", favorite: false },
+ { term: "LINE of Business", translation: "业务线（LOB）", explanation: "业务线（LOB）指企业中核心的、产生收入的业务活动或系统，如财务、销售或生产管理软件。", category: "软件工程", favorite: false },
+ { term: "link", translation: "链接", explanation: "链接是计算机中指向其他资源（如文件、网页或数据）的引用或连接，用于导航和资源访问。", category: "计算机基础", favorite: false },
+ { term: "link seam", translation: "连接期接缝", explanation: "连接期接缝是软件测试中的一种接缝类型，允许在程序链接时修改行为，用于隔离依赖进行测试。", category: "测试", favorite: false },
+ { term: "linked resource", translation: "链接的资源", explanation: "链接的资源指在项目或系统中被引用但存储在其他位置的文件或数据，如共享库或外部配置文件。", category: "软件工程", favorite: false },
+ { term: "Liskov Substitution Principle", translation: "里氏替换原则（LSP）", explanation: "里氏替换原则是面向对象设计原则之一，指子类必须能够替换其父类而不影响程序的正确性，确保继承关系的合理性。", category: "软件工程", favorite: false },
+ { term: "literal", translation: "字面量、文字常量、直接量", explanation: "字面量是直接在代码中表示固定值的符号，如数字、字符串或布尔值，无需通过变量或计算来定义。", category: "编程语言", favorite: false },
+ { term: "living style guides", translation: "活样式指导", explanation: "活样式指导是动态的文档或工具，用于展示和维护前端代码的样式和组件，确保设计一致性并促进团队协作。", category: "前端开发", favorite: false },
+ { term: "LLM", translation: "大型语言模型（Large Language Model） ", explanation: "大型语言模型是基于深度学习的自然语言处理模型，通过大量文本训练，能够生成和理解人类语言，用于多种AI任务。", category: "人工智能", favorite: false },
+ { term: "load-balancing", translation: "负载平衡", explanation: "负载平衡是分配网络或计算资源的技术，将请求分散到多个服务器上，以提高系统性能、可靠性和可扩展性。", category: "计算机网络", favorite: false },
+ { term: "load balancer", translation: "负载平衡器", explanation: "负载平衡器是硬件或软件设备，用于在多个服务器之间分配传入的网络流量，确保高效处理请求并避免单点故障。", category: "计算机网络", favorite: false },
+ { term: "load factor", translation: "负载因子", explanation: "负载因子是哈希表中已存储元素数量与桶总数之比，用于衡量哈希表的拥挤程度，影响其性能和扩容决策。", category: "数据结构", favorite: false },
+ { term: "load shedding", translation: "减载", explanation: "减载是系统在过载时主动丢弃部分请求或任务，以维持核心功能运行，防止整体崩溃，常见于高负载场景。", category: "软件工程", favorite: false },
+ { term: "LOC", translation: "代码行数", explanation: "代码行数是衡量软件项目大小的指标，指源代码中的行数，常用于估算开发工作量、复杂度或维护成本。", category: "软件工程", favorite: false },
+ { term: "Local Function", translation: "局部函数", explanation: "局部函数是在另一个函数内部定义的函数，仅在其外部函数的作用域内可见和可用，有助于封装和代码组织。", category: "编程语言", favorite: false },
+ { term: "lock-step release", translation: "同步发布", explanation: "指多个软件版本或组件在同一时间点发布，确保依赖关系一致，常用于大型系统或微服务架构中。", category: "软件工程", favorite: false },
+ { term: "log", translation: "日志", explanation: "记录系统运行过程中发生的事件或状态的文件，用于调试、监控和审计，帮助开发者追踪问题。", category: "计算机基础", favorite: false },
+ { term: "loop", translation: "自循环", explanation: "指程序中的循环结构，允许重复执行一段代码直到满足特定条件，是控制流程的基本概念。", category: "编程语言", favorite: false },
+ { term: "loose coupling", translation: "松散耦合", explanation: "系统组件之间依赖关系较弱的设计原则，提高模块独立性和可维护性，便于修改和扩展。", category: "软件工程", favorite: false },
+ { term: "Low Fidelity Prototype", translation: "低保真原型，抽象原型视图", explanation: "一种简单的原型设计，通常用草图或线框图表示界面布局，用于快速验证概念和用户交互。", category: "软件工程", favorite: false },
+ { term: "low surrogate", translation: "低位代理项", explanation: "Unicode编码中用于表示辅助平面字符的编码单元的一部分，与高位代理项配对形成完整字符。", category: "计算机基础", favorite: false },
+ { term: "LSUD", translation: "大批你所不知道的开发人员（Large Set of Unknown Developers）", explanation: "指在大型项目中，许多开发人员对系统整体了解有限，专注于局部模块，可能影响协作和系统一致性。", category: "软件工程", favorite: false },
+ { term: "Mainframe", translation: "主机", explanation: "大型、高性能的计算机系统，用于处理关键业务和数据密集型任务，常见于银行和政府机构。", category: "硬件架构", favorite: false },
+ { term: "Maintainability", translation: "可维护性", explanation: "软件易于修改、调试和扩展的特性，涉及代码清晰度、文档和模块化设计，降低长期维护成本。", category: "软件工程", favorite: false },
+ { term: "managed code", translation: "托管代码", explanation: "在托管环境中运行的代码，如.NET或Java，由运行时环境管理内存、安全等资源，提高开发效率。", category: "编程语言", favorite: false },
+ { term: "managed execution", translation: "托管执行", explanation: "托管执行是程序运行时环境（如.NET CLR）自动管理内存分配、垃圾回收、线程调度和安全检查等任务，简化开发并提高安全性。", category: "编程语言", favorite: false },
+ { term: "Man-In-The-Middle Attack", translation: "中间人攻击（MITM 攻击）", explanation: "中间人攻击是一种网络安全攻击，攻击者秘密拦截并可能篡改通信双方之间的数据交换，以窃取信息或冒充身份。", category: "网络安全", favorite: false },
+ { term: "Management Key", translation: "管理密钥", explanation: "管理密钥是用于控制或管理加密设备（如TPM模块）的密钥，通常用于授权配置更改、密钥备份或访问权限设置。", category: "网络安全", favorite: false },
+ { term: "manifest", translation: "清单", explanation: "清单是描述软件组件（如程序集、依赖项或配置）的元数据文件，用于确保正确部署和版本控制，常见于Java JAR或.NET程序集。", category: "软件工程", favorite: false },
+ { term: "map", translation: "映射", explanation: "映射是一种数据结构，将键与值关联起来，允许通过键快速查找对应的值，常见实现如哈希表或字典，用于高效数据检索。", category: "数据结构", favorite: false },
+ { term: "Market Requirement Document", translation: "市场需求文档（MRD）", explanation: "市场需求文档是描述产品市场机会、目标用户、竞争分析和功能需求的文档，用于指导产品规划和开发方向。", category: "项目管理", favorite: false },
+ { term: "Massive Multiplayer Online Role-Playing Game", translation: "大型多人在线角色扮演游戏（MMORPG）", explanation: "大型多人在线角色扮演游戏是一种网络游戏，允许大量玩家在虚拟世界中同时互动、完成任务和角色成长，如《魔兽世界》。", category: "其他", favorite: false },
+ { term: "Massively Multiplayer Online Role-Playing Game", translation: "大型多人在线角色扮演游戏（MMORPG）", explanation: "大型多人在线角色扮演游戏是MMORPG的全称，指支持成千上万玩家在线互动的角色扮演游戏，强调社交和持续世界演进。", category: "其他", favorite: false },
+ { term: "Mathematical Markup Language", translation: "数学标记语言（MathML）", explanation: "数学标记语言是一种基于XML的标准，用于在网页和文档中描述数学符号和公式，确保数学内容能正确显示和交换。", category: "前端开发", favorite: false },
+ { term: "Mean Time Between Failures", translation: "平均故障时间间隔（MTBF）", explanation: "平均故障时间间隔是衡量系统可靠性的指标，表示在两次故障之间的平均运行时间，常用于硬件或软件系统的稳定性评估。", category: "测试", favorite: false },
+ { term: "Mean Time To Repair", translation: "平均修复时间（MTTR）", explanation: "平均修复时间（MTTR）是衡量系统可靠性的指标，指从故障发生到系统恢复正常所需的平均时间。", category: "软件工程", favorite: false },
+ { term: "Media Service", translation: "媒体服务", explanation: "媒体服务指提供音频、视频等多媒体内容处理、存储、传输和分发的软件或平台服务。", category: "其他", favorite: false },
+ { term: "Mediator Pattern", translation: "中介者模式", explanation: "中介者模式是一种行为设计模式，通过引入中介对象来减少多个对象间的直接耦合，促进松耦合通信。", category: "设计模式", favorite: false },
+ { term: "Medium", translation: "中型", explanation: "中型通常指在软件开发或项目管理中，用于描述项目规模、团队大小或系统复杂度的中等级别分类。", category: "项目管理", favorite: false },
+ { term: "Memento Pattern", translation: "备忘录模式", explanation: "备忘录模式是一种行为设计模式，允许在不破坏封装的前提下捕获并恢复对象的内部状态，用于实现撤销功能。", category: "设计模式", favorite: false },
+ { term: "Merge", translation: "合并", explanation: "合并指在版本控制或数据处理中，将两个或多个分支、数据集或修改内容整合为一个统一版本的操作。", category: "开发工具", favorite: false },
+ { term: "Metadata", translation: "元数据", explanation: "元数据是描述数据的数据，提供关于其他数据的属性、结构、来源或上下文信息，如文件大小、创建日期等。", category: "计算机基础", favorite: false },
+ { term: "metaprogramming", translation: "元编程", explanation: "元编程是一种编程技术，允许程序在运行时动态生成或修改代码，以增强灵活性和自动化，常见于反射和模板。", category: "编程语言", favorite: false },
+ { term: "Middleware", translation: "中间件", explanation: "中间件是位于操作系统和应用程序之间的软件层，用于处理通信、数据管理或服务集成，简化分布式系统开发。", category: "后端开发", favorite: false },
+ { term: "mind map", translation: "思维导图、脑图、心智图", explanation: "思维导图是一种图形化工具，通过节点和分支展示想法、概念或任务间的层次和关联，用于头脑风暴和规划。", category: "项目管理", favorite: false },
+ { term: "Minimum Marketable Feature", translation: "最小可售特性（MMF）", explanation: "最小可售特性（MMF）是指产品中能够独立交付给用户、并产生价值的最小功能单元，通常用于敏捷开发中优先实现核心功能。", category: "项目管理", favorite: false },
+ { term: "Minimum Viable Product", translation: "最小化可行产品（MVP）", explanation: "最小化可行产品（MVP）是产品开发早期推出的具有最基本功能的版本，用于快速验证市场假设和收集用户反馈，以指导后续迭代。", category: "软件工程", favorite: false },
+ { term: "Minimum Viable Release", translation: "最小可行发布（MVR）", explanation: "最小可行发布（MVR）是指将产品以最小可行形式发布到生产环境的过程，强调快速交付和持续改进，常用于敏捷和DevOps实践。", category: "软件工程", favorite: false },
+ { term: "Missing Abstraction", translation: "缺失抽象", explanation: "缺失抽象是指在软件设计中未能将相关概念或行为归纳为适当的抽象类或接口，导致代码重复和难以维护，是常见的设计缺陷。", category: "设计模式", favorite: false },
+ { term: "Missing Encapsulation", translation: "缺失的封装", explanation: "缺失的封装是指未将数据和行为封装在合适的类或模块中，导致外部代码可以直接访问内部细节，破坏了信息隐藏原则，增加耦合度。", category: "设计模式", favorite: false },
+ { term: "Missing Hierarchy", translation: "缺失层次结构", explanation: "缺失层次结构是指在面向对象设计中未建立合理的类继承或接口层次，导致代码结构扁平化，难以扩展和复用，影响系统灵活性。", category: "设计模式", favorite: false },
+ { term: "Mixed Reality", translation: "混合现实（MR）", explanation: "混合现实（MR）是一种将虚拟对象与现实世界环境融合的技术，用户可以通过设备与虚拟和现实元素进行实时交互，扩展了感知体验。", category: "其他", favorite: false },
+ { term: "Mobile Service", translation: "移动服务", explanation: "移动服务是指专为移动设备（如智能手机和平板电脑）提供的网络服务或应用程序，通常涉及移动应用开发、后端支持和云集成。", category: "移动开发", favorite: false },
+ { term: "Mock Object", translation: "模拟对象，仿对象：在内部对条件进行断言的伪对象", explanation: "模拟对象（Mock Object）是测试中使用的伪对象，用于模拟真实对象的行为，并在内部对条件进行断言，以隔离测试单元并验证交互。", category: "测试", favorite: false },
+ { term: "Move Field", translation: "搬移字段", explanation: "搬移字段（Move Field）是一种代码重构技术，将某个字段从一个类移动到另一个更合适的类中，以改善代码结构和职责分配。", category: "软件工程", favorite: false },
+ { term: "Move Method", translation: "搬移函数", explanation: "将方法从一个类移动到另一个类，以改善代码结构，使方法更接近其操作的数据。", category: "软件工程", favorite: false },
+ { term: "MRD", translation: "市场需求文档（Market Requirement Document）", explanation: "描述产品市场需求、目标用户和功能需求的文档，用于指导产品开发和设计。", category: "项目管理", favorite: false },
+ { term: "Multitenancy", translation: "多租户", explanation: "一种软件架构，允许多个租户共享同一应用实例，但数据相互隔离，常见于SaaS服务。", category: "软件工程", favorite: false },
+ { term: "Multifaced Abstraction", translation: "多方面抽象", explanation: "一个抽象类或接口承担过多职责，导致设计复杂和难以维护，是代码坏味道的一种。", category: "软件工程", favorite: false },
+ { term: "Multipath Hierarchy", translation: "多路径层次结构", explanation: "在面向对象设计中，类继承多个父类形成复杂层次结构，可能导致设计混乱和菱形继承问题。", category: "软件工程", favorite: false },
+ { term: "Multitier Architecture", translation: "多层体系结构", explanation: "将应用分为多个逻辑层（如表示层、业务逻辑层、数据访问层），以提高可维护性和可扩展性。", category: "软件工程", favorite: false },
+ { term: "Multi-factor Authentication", translation: "多重验证", explanation: "使用两种或以上验证因素（如密码、手机验证码、指纹）来确认用户身份，增强安全性。", category: "网络安全", favorite: false },
+ { term: "naming collisions", translation: "命名冲突", explanation: "在编程中，两个或多个标识符（如变量、函数）具有相同名称，导致编译器或解释器无法区分。", category: "编程语言", favorite: false },
+ { term: "Namespace", translation: "命名空间，名称空间", explanation: "用于组织代码中标识符（如类、函数）的容器，避免命名冲突，并提高代码可读性。", category: "编程语言", favorite: false },
+ { term: "native code", translation: "本机代码", explanation: "直接编译为特定计算机处理器指令的代码，运行速度快，但依赖于硬件平台。", category: "计算机基础", favorite: false },
+ { term: "NCC", translation: ".NET Core 社区（.NET Core Community）/.NET 中国社区（.NET China Community）", explanation: "NCC 是 .NET Core 社区或 .NET 中国社区的缩写，是一个专注于 .NET 技术交流和推广的开源社区组织。", category: "其他", favorite: false },
+ { term: "Near Field Communication", translation: "近距离无线通信（NFC）", explanation: "近距离无线通信（NFC）是一种短距离高频无线通信技术，允许电子设备在几厘米内进行数据交换，常用于移动支付和门禁。", category: "硬件架构", favorite: false },
+ { term: "network hops", translation: "网络跳数", explanation: "网络跳数指数据包从源到目的地经过的路由器或网络节点的数量，用于衡量网络路径的复杂性和延迟。", category: "计算机网络", favorite: false },
+ { term: "NFC", translation: "近距离无线通信（Near Field Communication）", explanation: "NFC 是近距离无线通信的缩写，是一种短距离无线技术，支持设备间非接触式数据交换，如手机支付和票务。", category: "硬件架构", favorite: false },
+ { term: "nfx", translation: ".NET Framework（.NET 框架）", explanation: "nfx 是 .NET Framework 的缩写，是微软开发的软件框架，用于构建和运行 Windows 应用程序，提供丰富的类库和运行时环境。", category: "编程语言", favorite: false },
+ { term: "Non-clustered Index", translation: "非聚集索引", explanation: "非聚集索引是数据库中的一种索引类型，其索引顺序与数据物理存储顺序无关，通过指针指向数据行，提高查询速度但占用额外空间。", category: "数据库", favorite: false },
+ { term: "non-managed code", translation: "非托管代码", explanation: "非托管代码指不由运行时环境（如 .NET CLR）自动管理内存和资源的代码，通常用 C 或 C++ 编写，需要手动管理内存。", category: "编程语言", favorite: false },
+ { term: "non-optional", translation: "非可选的", explanation: "非可选的是指在编程或配置中，某个参数、属性或选项必须提供或设置，不能省略或为空，否则会导致错误。", category: "计算机基础", favorite: false },
+ { term: "non-transactional pipeline", translation: "非事务型流水线", explanation: "非事务型流水线是一种数据处理架构，其中操作不保证原子性或一致性，适用于高性能场景，但可能丢失部分数据。", category: "软件工程", favorite: false },
+ { term: "node", translation: "节点", explanation: "节点是网络或数据结构中的一个基本单元，可以表示计算机、路由器或数据元素，用于连接和传递信息。", category: "计算机基础", favorite: false },
+ { term: "normalize", translation: "规格化", explanation: "将数据转换为标准格式，消除冗余和不一致，常用于数据库和数据处理中。", category: "数据库", favorite: false },
+ { term: "notification", translation: "通知", explanation: "系统或应用向用户发送的消息或提醒，用于告知事件或更新，常见于移动设备和软件界面。", category: "前端开发", favorite: false },
+ { term: "notification hub", translation: "通知中心", explanation: "集中管理和发送通知的服务或组件，支持跨平台推送，常用于移动应用和云服务中。", category: "移动开发", favorite: false },
+ { term: "Null Object Pattern", translation: "空对象模式", explanation: "设计模式的一种，用空对象代替null值，避免空指针异常，提高代码健壮性和可读性。", category: "设计模式", favorite: false },
+ { term: "null-coalescing", translation: "空值合并", explanation: "处理空值的操作，当变量为null时返回默认值，简化代码逻辑，常见于编程语言中。", category: "编程语言", favorite: false },
+ { term: "Null coalescing operator", translation: "空值合并运算符、空值结合运算符", explanation: "编程语言中的运算符（如??），用于空值合并，快速检查null并返回非空值或默认值。", category: "编程语言", favorite: false },
+ { term: "N-Tier", translation: "N 层（结构）", explanation: "软件架构模式，将应用分为多个逻辑层（如表示层、业务层、数据层），提高可维护性和扩展性。", category: "软件工程", favorite: false },
+ { term: "obfuscator", translation: "混淆器", explanation: "工具或程序，用于将代码转换为难以阅读但功能相同的版本，保护知识产权和防止逆向工程。", category: "开发工具", favorite: false },
+ { term: "Object Pool", translation: "对象池", explanation: "管理对象复用的技术，预先创建并缓存对象池，减少频繁创建和销毁对象的开销，提升性能。", category: "软件工程", favorite: false },
+ { term: "Object Pool Pattern", translation: "对象池模式", explanation: "设计模式的一种，通过对象池重用对象，优化资源管理，常用于游戏开发和高性能应用中。", category: "设计模式", favorite: false },
+ { term: "Object/Relational Mapper", translation: "对象/关系映射器（ORM，O/RM）", explanation: "一种编程技术，用于在面向对象编程语言和关系数据库之间建立映射，自动将对象数据转换为数据库记录，简化数据持久化操作。", category: "软件工程", favorite: false },
+ { term: "object seam", translation: "对象接缝", explanation: "在面向对象编程中，指通过多态或依赖注入等技术，在运行时替换对象依赖，以实现测试或行为变更的代码接合点。", category: "软件工程", favorite: false },
+ { term: "Objectives and Key Results", translation: "目标与关键成果法（OKR）", explanation: "一种目标管理框架，通过设定明确目标（Objectives）和可量化关键成果（Key Results），帮助团队或个人聚焦并跟踪进展。", category: "项目管理", favorite: false },
+ { term: "Observer Pattern", translation: "观察者模式", explanation: "一种设计模式，定义对象间的一对多依赖关系，当一个对象状态改变时，所有依赖它的对象都会自动收到通知并更新。", category: "设计模式", favorite: false },
+ { term: "On-demand (media)", translation: "点播（媒体）", explanation: "一种媒体传输方式，允许用户根据需要随时选择并播放音频、视频等内容，如流媒体服务，区别于传统的广播或直播。", category: "计算机网络", favorite: false },
+ { term: "Once and Only Once", translation: "一次且仅一次3(OAOO)", explanation: "软件开发原则，强调系统中每个功能或知识应只在一个地方实现，避免重复代码，以提高可维护性和一致性。", category: "软件工程", favorite: false },
+ { term: "One rule, one place", translation: "一个规则，实现一次", explanation: "与“一次且仅一次”类似，指业务规则或逻辑应在代码中只实现一次，减少重复，确保修改时只需改动一处。", category: "软件工程", favorite: false },
+ { term: "One-Size-Fits-All", translation: "OSFA", explanation: "指试图用单一方案解决所有问题的通用方法，在软件中常因忽略具体需求差异而导致设计僵化或效率低下。", category: "软件工程", favorite: false },
+ { term: "one-time token", translation: "一次性令牌", explanation: "一种安全令牌，仅在一次认证或交易中使用后即失效，常用于双因素认证或防止重放攻击，增强系统安全性。", category: "网络安全", favorite: false },
+ { term: "Onion Architecture", translation: "洋葱架构，由 Jeffrey Palermo 提出", explanation: "一种分层软件架构，核心是领域模型，外层是应用服务和基础设施，依赖指向内层，强调关注点分离和可测试性。", category: "软件工程", favorite: false },
+ { term: "Open Closed Principle", translation: "开闭原则（OCP）", explanation: "开闭原则是面向对象设计原则之一，指软件实体应对扩展开放，对修改关闭，以提高系统的可维护性和稳定性。", category: "设计模式", favorite: false },
+ { term: "Open System Interconnection", translation: "开放式系统互联（OSI）", explanation: "开放式系统互联是一个网络通信的参考模型，将网络通信分为七层，用于标准化不同系统间的互联和通信协议。", category: "计算机网络", favorite: false },
+ { term: "Operating System", translation: "操作系统（OS）", explanation: "操作系统是管理计算机硬件与软件资源的系统软件，提供用户界面和程序运行环境，如Windows、Linux等。", category: "操作系统", favorite: false },
+ { term: "Optical Character Recognition", translation: "光学字符识别（OCR）", explanation: "光学字符识别是一种技术，通过扫描将图像中的文字转换为可编辑的文本数据，常用于文档数字化和自动化处理。", category: "人工智能", favorite: false },
+ { term: "Optimistic Concurrency", translation: "乐观并发控制", explanation: "乐观并发控制是一种数据库并发处理策略，假设事务冲突较少，只在提交时检查数据是否被修改，以提高性能。", category: "数据库", favorite: false },
+ { term: "optimistic locking", translation: "乐观锁", explanation: "乐观锁是一种并发控制机制，在更新数据时检查版本号或时间戳，避免冲突，常用于高并发场景以减少锁开销。", category: "数据库", favorite: false },
+ { term: "orchestration", translation: "编排", explanation: "编排指自动化管理和协调多个系统或服务的工作流程，例如在微服务架构中调度任务和资源以确保高效运行。", category: "软件工程", favorite: false },
+ { term: "Orchestration Layer", translation: "策略编排层", explanation: "策略编排层是软件架构中的组件，负责集中管理和执行业务逻辑或服务调用策略，以提升系统的灵活性和可维护性。", category: "软件工程", favorite: false },
+ { term: "Ordering Principal", translation: "良序原则", explanation: "良序原则是数学和计算机科学中的基础概念，指集合中的元素可以按某种顺序排列，常用于算法分析和证明。", category: "计算机基础", favorite: false },
+ { term: "OS", translation: "操作系统（Operating System）", explanation: "操作系统是计算机的核心系统软件，负责管理硬件资源、运行应用程序，并提供用户交互界面，如macOS或Android。", category: "操作系统", favorite: false },
+ { term: "OSGI", translation: "开放服务网关协议（Open Source Gateway Initiative）", explanation: "OSGI是一种面向Java的动态模块化系统规范，允许应用程序拆分为多个可独立部署和管理的模块（bundle）。", category: "软件工程", favorite: false },
+ { term: "overriding", translation: "重写", explanation: "重写是面向对象编程中的概念，指子类重新定义父类中已有的方法，以提供特定实现，支持多态性。", category: "编程语言", favorite: false },
+ { term: "Overview", translation: "概览", explanation: "概览是对某个主题、系统或文档的简要总结或概述，帮助快速理解核心内容和结构。", category: "计算机基础", favorite: false },
+ { term: "over-post", translation: "过度提交", explanation: "过度提交是一种安全漏洞，指客户端向服务器发送了超出预期的数据字段，可能导致未授权的数据修改。", category: "网络安全", favorite: false },
+ { term: "OWASP", translation: "开放式 Web 应用程序安全项目（Open Web Application Security Project）4", explanation: "OWASP是一个非营利组织，专注于提高Web应用程序的安全性，提供免费的安全工具、标准和指南。", category: "网络安全", favorite: false },
+ { term: "P2P", translation: "个人对个人（Person-to-Person）", explanation: "P2P是对等网络架构，其中每个节点（peer）既可以作为客户端请求资源，也可以作为服务器提供资源，无需中央服务器。", category: "计算机网络", favorite: false },
+ { term: "Paas", translation: "平台即服务（Platform As A Service）", explanation: "PaaS是云计算服务模型之一，提供商提供硬件和软件平台（如操作系统、开发工具），用户可在此上部署和管理应用程序。", category: "云计算", favorite: false },
+ { term: "packet sniffing", translation: "分组嗅探", explanation: "分组嗅探是网络监控技术，通过捕获和分析网络数据包来检查流量内容，常用于故障排查或安全分析。", category: "网络安全", favorite: false },
+ { term: "Page Blob", translation: "页 BLOB", explanation: "页BLOB是Azure Blob存储中的一种类型，用于存储随机访问文件（如虚拟硬盘），数据被组织为512字节的页。", category: "云计算", favorite: false },
+ { term: "Parameterize Method", translation: "令函数携带参数", explanation: "令函数携带参数是一种重构技术，将函数中的字面量值替换为参数，提高代码的灵活性和可重用性。", category: "软件工程", favorite: false },
+ { term: "Partial Translate", translation: "部分翻译（出自 Chrome 浏览器）", explanation: "Chrome浏览器中的一项功能，允许用户选择网页上的部分文本进行翻译，而不是翻译整个页面。", category: "前端开发", favorite: false },
+ { term: "partition", translation: "分区", explanation: "在计算机中，指将存储设备（如硬盘）或数据集合划分为多个独立部分的过程，常用于磁盘管理或数据处理。", category: "计算机基础", favorite: false },
+ { term: "Partition tolerance", translation: "分区容忍性", explanation: "分布式系统中的CAP定理之一，指系统在遇到网络分区（部分节点无法通信）时仍能继续运行并保持一致性或可用性。", category: "计算机基础", favorite: false },
+ { term: "PascalCase", translation: "Pascal 大小写", explanation: "一种命名约定，其中每个单词的首字母大写且无空格，常用于编程中的类名或标识符命名，如“FirstName”。", category: "编程语言", favorite: false },
+ { term: "pass-through", translation: "直托", explanation: "指数据或信号不经修改直接从一个系统传递到另一个系统，常用于虚拟化或网络环境中，以保持原始状态。", category: "计算机基础", favorite: false },
+ { term: "passive", translation: "被动（的）", explanation: "在计算中，指组件或模式以非主动方式运行，例如被动等待事件触发，常用于网络通信或软件设计。", category: "计算机基础", favorite: false },
+ { term: "pattern", translation: "模式", explanation: "在软件工程中，指可重复使用的解决方案模板，用于解决常见设计问题，如设计模式或代码模式。", category: "软件工程", favorite: false },
+ { term: "Pay as You Go", translation: "即用即付", explanation: "一种云计算计费模式，用户根据实际使用的资源量（如计算时间、存储空间）付费，无需预付固定费用。", category: "云计算", favorite: false },
+ { term: "PC", translation: "个人计算机（Personal Computer）", explanation: "个人计算机的缩写，指为个人使用设计的通用计算机，通常包括台式机或笔记本电脑，运行操作系统如Windows或macOS。", category: "硬件架构", favorite: false },
+ { term: "peek", translation: "查看", explanation: "在编程中，指查看数据结构（如队列或栈）顶部的元素而不移除它，常用于数据访问操作。", category: "数据结构", favorite: false },
+ { term: "peering rules", translation: "对等交互规则", explanation: "对等交互规则是网络中对等体之间交换路由信息时遵循的协议和策略，用于控制数据流和优化网络性能。", category: "计算机网络", favorite: false },
+ { term: "Percent Encoding", translation: "百分号编码", explanation: "百分号编码是一种在URL中将特殊字符转换为%后跟两位十六进制数的编码方式，以确保数据在传输中的安全性和兼容性。", category: "计算机网络", favorite: false },
+ { term: "performance", translation: "性能", explanation: "性能指计算机系统或软件在执行任务时的效率指标，如响应时间、吞吐量和资源利用率，用于评估系统优劣。", category: "计算机基础", favorite: false },
+ { term: "performance counter", translation: "性能计数器", explanation: "性能计数器是操作系统或应用程序中用于实时监测和记录系统性能数据的工具，如CPU使用率或内存占用，帮助诊断问题。", category: "操作系统", favorite: false },
+ { term: "performance-oriented", translation: "面向性能", explanation: "面向性能是一种设计或开发理念，强调在系统或软件中优先考虑优化速度、效率和资源使用，以提升整体表现。", category: "软件工程", favorite: false },
+ { term: "Person-to-Person", translation: "个人对个人（P2P）", explanation: "个人对个人（P2P）是一种网络架构，其中设备直接相互通信和共享资源，无需中央服务器，常用于文件共享或区块链。", category: "计算机网络", favorite: false },
+ { term: "Personal Computer", translation: "个人计算机（PC）", explanation: "个人计算机（PC）是一种为个人使用设计的通用计算机，通常包括台式机或笔记本电脑，用于日常办公、娱乐等任务。", category: "硬件架构", favorite: false },
+ { term: "Pessimistic Concurrency", translation: "悲观并发控制", explanation: "悲观并发控制是一种数据库管理策略，假设事务间很可能冲突，因此在操作前先锁定资源，防止并发问题，确保数据一致性。", category: "数据库", favorite: false },
+ { term: "pessimistic locking", translation: "悲观锁", explanation: "悲观锁是悲观并发控制的具体实现，在事务访问数据时立即加锁，阻止其他事务修改，直到当前事务完成，以避免冲突。", category: "数据库", favorite: false },
+ { term: "PHAME", translation: "由 Booch 提出的对象模型的 4 个主要元素的设计规则的统称，即 Principle of Hierarchy, Abstraction, Modularization, and Encapsulation，层次结构、抽象、模块化与封装原则", explanation: "PHAME是Booch提出的对象模型设计原则，包括层次结构、抽象、模块化与封装，用于指导软件系统的结构化开发。", category: "软件工程", favorite: false },
+ { term: "pinch point", translation: "汇点：影响结构图中的隘口和交通要冲，在汇点编写测试的好处就是只需针对少数几个方法编写测试，就能达到探测大量其他方法的改动的目的。", explanation: "汇点指软件结构图中的关键节点，少量方法变动会影响大量其他部分。在此编写测试可高效探测整体改动。", category: "软件工程", favorite: false },
+ { term: "placeholder", translation: "占位符", explanation: "占位符是代码或界面中预留的临时标记，用于后续替换为实际内容，常见于模板和国际化文本中。", category: "编程语言", favorite: false },
+ { term: "Platform as a Service", translation: "平台即服务（Paas）", explanation: "平台即服务是一种云计算模式，提供商提供硬件和软件平台，用户可在此部署和管理应用程序，无需管理底层基础设施。", category: "云计算", favorite: false },
+ { term: "PMD", translation: "项目管理文档（Program Managment Document）", explanation: "项目管理文档是记录项目目标、计划、进度和资源的正式文件，用于指导和控制项目的执行过程。", category: "项目管理", favorite: false },
+ { term: "point of invocation of the method", translation: "方法调用点", explanation: "方法调用点是程序中调用某个方法的具体位置，包括代码行和上下文环境，用于确定方法执行时的入口。", category: "编程语言", favorite: false },
+ { term: "Point-to-Site", translation: "点到站点", explanation: "点到站点是一种网络连接方式，允许单个客户端通过安全隧道（如VPN）远程连接到私有网络，常见于远程办公场景。", category: "计算机网络", favorite: false },
+ { term: "polling", translation: "轮询", explanation: "轮询是一种程序主动重复查询设备或服务状态的机制，以检查是否有新数据或事件发生，会消耗一定计算资源。", category: "计算机基础", favorite: false },
+ { term: "polymorphism", translation: "多态", explanation: "多态是面向对象编程的特性，允许同一接口或方法在不同对象上有不同实现，提高代码的灵活性和可扩展性。", category: "编程语言", favorite: false },
+ { term: "polyrot programming", translation: "多语言编程", explanation: "多语言编程指在单个项目中混合使用多种编程语言，以利用各自优势，如用C++处理性能关键部分，用Python编写脚本。", category: "软件工程", favorite: false },
+ { term: "Poor Man’s Dependency Injection", translation: "穷人的依赖注入", explanation: "穷人的依赖注入是一种简化依赖注入的方法，不依赖复杂框架，而是通过手动传递依赖对象来降低耦合，便于测试和维护。", category: "设计模式", favorite: false },
+ { term: "post-initialization", translation: "后初始化", explanation: "在对象初始化完成后执行的额外设置或配置步骤，常用于确保对象状态完全就绪。", category: "软件工程", favorite: false },
+ { term: "postcondition", translation: "后置条件", explanation: "函数或方法执行后必须满足的条件，用于描述执行结果应具备的状态或属性。", category: "软件工程", favorite: false },
+ { term: "PoT", translation: "程序思维（Program-to-Thoughts） ", explanation: "一种编程思维模式，强调将程序逻辑转化为清晰的思维过程，以提升代码可读性和可维护性。", category: "计算机基础", favorite: false },
+ { term: "PRD", translation: "产品需求文档（Product Requirements Document）", explanation: "描述产品功能、特性和需求的正式文档，用于指导产品设计和开发过程。", category: "项目管理", favorite: false },
+ { term: "pre-flight request", translation: "事先请求", explanation: "在发送实际HTTP请求（如PUT、DELETE）前，浏览器自动发送的OPTIONS请求，用于检查跨域和服务器支持的方法。", category: "计算机网络", favorite: false },
+ { term: "pre-initialization", translation: "预初始化", explanation: "在对象正式初始化之前执行的准备工作，如分配资源或设置默认值。", category: "软件工程", favorite: false },
+ { term: "pre-training", translation: "预训练 ", explanation: "在特定任务训练前，使用大规模数据对模型进行的基础训练，以学习通用特征表示。", category: "机器学习", favorite: false },
+ { term: "Predicate Decorator", translation: "谓词修饰器", explanation: "一种设计模式，用于动态地为对象添加额外的条件判断逻辑，常见于规则引擎或过滤系统中。", category: "设计模式", favorite: false },
+ { term: "precondition", translation: "前提，前置条件", explanation: "函数或方法执行前必须满足的条件，用于确保输入参数和环境状态有效。", category: "软件工程", favorite: false },
+ { term: "presentation layer", translation: "表现层", explanation: "软件架构中的一层，负责处理用户界面和用户交互，将数据以可视形式呈现给用户。", category: "软件工程", favorite: false },
+ { term: "Preserve Whole Object", translation: "保持对象完整", explanation: "一种重构手法，指将多个参数替换为整个对象，以减少参数数量并提高代码可读性。", category: "软件工程", favorite: false },
+ { term: "primary database", translation: "主数据库", explanation: "在数据库系统中，处理主要读写操作的核心数据库，通常用于存储关键业务数据。", category: "数据库", favorite: false },
+ { term: "primary storage", translation: "主存储", explanation: "计算机中直接与CPU交互的存储设备，如内存（RAM），用于临时存储正在运行的程序和数据。", category: "计算机基础", favorite: false },
+ { term: "primitive obsession", translation: "基本类型偏执", explanation: "代码坏味道之一，指过度使用基本数据类型（如整数、字符串）来表示概念，而不是使用对象。", category: "软件工程", favorite: false },
+ { term: "principal", translation: "主体", explanation: "在安全上下文中，指参与系统交互的实体，如用户、设备或服务，通常用于身份验证和授权。", category: "网络安全", favorite: false },
+ { term: "Private Class Data Pattern", translation: "私有类数据模式", explanation: "一种设计模式，通过限制对类内部数据的直接访问，封装数据以防止意外修改，增强数据安全性。", category: "设计模式", favorite: false },
+ { term: "private cloud", translation: "私有云", explanation: "云计算部署模型，云基础设施专供单一组织使用，可在本地或第三方托管，提供更高控制和安全。", category: "云计算", favorite: false },
+ { term: "priority queue", translation: "优先级队列", explanation: "一种抽象数据类型，其中每个元素都有优先级，出队时按优先级顺序（如最高优先先出），常用于任务调度。", category: "数据结构", favorite: false },
+ { term: "probe", translation: "探测器", explanation: "在计算机网络或系统中，指用于检测、监控或收集信息的工具或程序，如网络探测器或性能探测器。", category: "计算机网络", favorite: false },
+ { term: "process", translation: "进程", explanation: "操作系统中的基本执行单元，是程序的一次运行实例，拥有独立的内存空间和资源，用于并发执行任务。", category: "操作系统", favorite: false },
+ { term: "producer", translation: "生产者", explanation: "在软件架构中，生产者是负责生成数据或事件的组件，通常与消费者模式配合，将消息放入队列供其他部分处理。", category: "软件工程", favorite: false },
+ { term: "product backlog", translation: "产品积压工作", explanation: "在敏捷开发中，产品积压工作是一个动态的、优先级排序的功能列表，包含了产品所有已知的需求、改进和修复任务。", category: "项目管理", favorite: false },
+ { term: "Product Owner", translation: "产品负责人（PO）", explanation: "产品负责人是敏捷团队中的关键角色，负责定义产品愿景、管理产品待办列表优先级，并确保团队交付最大业务价值。", category: "项目管理", favorite: false },
+ { term: "Product Requirements Document", translation: "产品需求文档（PRD）", explanation: "产品需求文档是一份详细描述产品功能、特性和约束的正式文档，用于指导开发团队理解和实现产品需求。", category: "软件工程", favorite: false },
+ { term: "production", translation: "生产（环境）", explanation: "生产环境是指软件正式部署并对外提供服务的运行环境，与开发、测试环境隔离，要求高稳定性和安全性。", category: "软件工程", favorite: false },
+ { term: "production load", translation: "生产负载", explanation: "生产负载指在生产环境中系统所承受的实际工作压力，包括用户访问量、数据处理量等，用于评估系统性能和容量。", category: "软件工程", favorite: false },
+ { term: "Program Managment Document", translation: "项目管理文档（PMD）", explanation: "项目管理文档是记录项目目标、计划、进度和资源的综合性文件，用于协调团队工作并跟踪项目执行情况。", category: "项目管理", favorite: false },
+ { term: "Program-to-Thoughts", translation: "程序思维（PoT） ", explanation: "程序思维是一种强调通过编写程序或伪代码来结构化思考和解决问题的认知方法，常用于复杂逻辑分析。", category: "计算机基础", favorite: false },
+ { term: "programming by difference", translation: "差异式编程", explanation: "差异式编程是一种通过继承现有类并只修改或扩展部分功能来实现新功能的面向对象编程技术，旨在减少重复代码。", category: "编程语言", favorite: false },
+ { term: "proof of concept", translation: "概念验证", explanation: "概念验证是通过构建一个简单的原型或实验来验证某项技术、方法或想法在实践中的可行性和潜在价值。", category: "软件工程", favorite: false },
+ { term: "proportional error rate", translation: "错误率比例", explanation: "错误率比例是衡量模型预测错误程度的指标，通常指错误预测数量与总预测数量的比值，用于评估模型性能。", category: "机器学习", favorite: false },
+ { term: "protected variation", translation: "防止变异", explanation: "防止变异是一种设计原则，旨在通过封装变化点来保护系统核心部分免受外部变化影响，提高代码的稳定性和可维护性。", category: "软件工程", favorite: false },
+ { term: "protocol", translation: "协议", explanation: "协议是计算机网络中通信双方共同遵守的规则和标准，用于定义数据格式、传输方式和错误处理，确保设备间有效交互。", category: "计算机网络", favorite: false },
+ { term: "prototype", translation: "原型", explanation: "原型是软件开发早期创建的初步模型，用于展示功能、界面或流程，帮助团队和用户验证设计思路，减少开发风险。", category: "软件工程", favorite: false },
+ { term: "Prototype Pattern", translation: "原型模式", explanation: "原型模式是一种创建型设计模式，通过复制现有对象来创建新对象，避免重复初始化，提高性能并简化对象创建过程。", category: "设计模式", favorite: false },
+ { term: "proxy", translation: "代理", explanation: "代理是计算机网络或软件中的中间实体，代表用户或系统执行任务，如转发请求、缓存数据或提供安全控制，以增强功能。", category: "计算机网络", favorite: false },
+ { term: "Proxy Pattern", translation: "代理模式", explanation: "代理模式是一种结构型设计模式，通过引入代理对象来控制对原始对象的访问，常用于实现延迟加载、权限控制或日志记录。", category: "设计模式", favorite: false },
+ { term: "public cloud", translation: "公有云", explanation: "公有云是由第三方提供商通过互联网向公众提供的云计算服务，用户按需付费使用资源，如存储、计算和应用程序。", category: "云计算", favorite: false },
+ { term: "Pull Up Constructor Body", translation: "构造函数本体上移", explanation: "构造函数本体上移是重构技术，将子类构造函数中的共同代码移动到父类构造函数中，以减少代码重复并提高可维护性。", category: "软件工程", favorite: false },
+ { term: "Pull Up Field", translation: "字段上移", explanation: "字段上移是重构技术，将多个子类中相同的字段移动到父类中，以消除冗余并促进代码重用，使继承结构更清晰。", category: "软件工程", favorite: false },
+ { term: "Pull Up Method", translation: "函数上移", explanation: "一种重构技术，将子类中相同的方法移动到父类中，以减少代码重复，提高代码复用性。", category: "软件工程", favorite: false },
+ { term: "push", translation: "推送", explanation: "在版本控制中，将本地代码更改上传到远程仓库的操作，以便与他人共享或备份代码。", category: "开发工具", favorite: false },
+ { term: "Push Down Field", translation: "字段下移", explanation: "一种重构技术，将父类中仅被部分子类使用的字段移动到相关子类中，以消除不必要的继承依赖。", category: "软件工程", favorite: false },
+ { term: "Push Down Method", translation: "函数下移", explanation: "一种重构技术，将父类中仅被部分子类使用的方法移动到相关子类中，以优化类层次结构。", category: "软件工程", favorite: false },
+ { term: "quality assurance", translation: "质量保证（QA）", explanation: "确保软件产品符合质量标准和用户需求的过程，包括测试、审查等活动，以预防缺陷。", category: "软件工程", favorite: false },
+ { term: "Queue", translation: "队列", explanation: "一种先进先出（FIFO）的线性数据结构，元素从一端添加，从另一端移除，常用于任务调度。", category: "数据结构", favorite: false },
+ { term: "Quota", translation: "配额", explanation: "对资源使用量的限制，如存储空间、网络带宽或API调用次数，用于管理和公平分配资源。", category: "云计算", favorite: false },
+ { term: "Rack", translation: "机架", explanation: "用于安装和堆叠服务器、网络设备等硬件单元的框架，通常部署在数据中心，便于管理和维护。", category: "硬件架构", favorite: false },
+ { term: "RAII", translation: "Resource Acquisition Is Initialization，资源获取即初始化", explanation: "一种C++编程惯用法，通过对象的生命周期管理资源（如内存、文件），确保资源自动释放，避免泄漏。", category: "编程语言", favorite: false },
+ { term: "Rapid Application Development", translation: "快速应用程序开发（RAD）", explanation: "一种软件开发方法论，强调快速原型和迭代开发，使用可视化工具加速应用构建，减少传统开发周期。", category: "软件工程", favorite: false },
+ { term: "RDBMS", translation: "关系型数据库管理系统（Relational Database Management System）", explanation: "关系型数据库管理系统，用于管理基于关系模型的数据，支持SQL查询，常见的有MySQL、Oracle等。", category: "数据库", favorite: false },
+ { term: "Reactive extensions", translation: "响应式扩展（Rx）", explanation: "响应式扩展，是一种编程范式，用于处理异步数据流，常见于事件驱动和实时应用开发中。", category: "编程语言", favorite: false },
+ { term: "Ready (status)", translation: "就绪（状态）", explanation: "就绪状态，指进程或资源已准备就绪，可以立即执行或使用，常见于操作系统和并发编程。", category: "操作系统", favorite: false },
+ { term: "real-time", translation: "即时、实时", explanation: "即时或实时，指系统或应用能够立即响应事件或处理数据，无显著延迟，常见于实时计算和通信。", category: "计算机基础", favorite: false },
+ { term: "real-time discussions", translation: "即时讨论、实时讨论", explanation: "即时讨论或实时讨论，指在线协作工具中支持用户实时交流的功能，常用于团队协作和项目管理。", category: "软件工程", favorite: false },
+ { term: "Rebellious Hierarchy", translation: "叛逆性层次结构", explanation: "叛逆性层次结构，是一种设计模式，用于处理对象间复杂关系，允许灵活的结构变化，较少常见。", category: "设计模式", favorite: false },
+ { term: "recursion", translation: "递归", explanation: "递归，是一种编程技术，函数直接或间接调用自身来解决问题，常见于算法和数据结构中。", category: "算法", favorite: false },
+ { term: "Redundancy", translation: "冗余", explanation: "冗余，指在系统中重复配置组件或数据，以提高可靠性和容错能力，常见于存储和网络设计。", category: "计算机基础", favorite: false },
+ { term: "Redundant", translation: "冗余（的）", explanation: "冗余的，形容词形式，描述具有重复备份特性的系统或组件，用于增强稳定性和可用性。", category: "计算机基础", favorite: false },
+ { term: "Ref Return", translation: "应用返回", explanation: "应用返回，是C#等编程语言中的特性，允许方法返回引用类型，直接修改原始数据，提高性能。", category: "编程语言", favorite: false },
+ { term: "Ref Local", translation: "局部引用", explanation: "Ref Local是C#中的一种变量类型，允许方法返回对局部变量的引用，通常用于提高性能或实现特定模式。", category: "编程语言", favorite: false },
+ { term: "Ref Property", translation: "引用属性", explanation: "Ref Property是C#中的属性，允许通过引用访问或修改对象的数据成员，常用于优化或直接操作数据。", category: "编程语言", favorite: false },
+ { term: "Ref-Safe-to-Escape", translation: "引用安全逃逸", explanation: "Ref-Safe-to-Escape是C#编译器中的安全分析机制，用于确保引用不会逃逸出其安全范围，防止内存错误。", category: "编程语言", favorite: false },
+ { term: "Ref-Safe-to-Escape scope", translation: "引用安全逃逸范围", explanation: "Ref-Safe-to-Escape scope定义了引用在C#中可以被安全使用的代码区域，确保引用不会在无效上下文中被访问。", category: "编程语言", favorite: false },
+ { term: "Refactor", translation: "重构", explanation: "Refactor指在不改变软件外部行为的前提下，改进代码的内部结构，以提高可读性、可维护性或性能。", category: "软件工程", favorite: false },
+ { term: "region", translation: "地域", explanation: "region在云计算中通常指数据中心的地理位置或逻辑分区，用于部署资源以提高可用性或合规性。", category: "云计算", favorite: false },
+ { term: "reification", translation: "具体化", explanation: "reification是将抽象概念（如类型或算法）转化为具体实现的过程，常见于编程语言和软件设计中。", category: "计算机基础", favorite: false },
+ { term: "Reinforcement Learning", translation: "强化学习", explanation: "Reinforcement Learning是一种机器学习方法，智能体通过与环境交互并基于奖励信号学习最优行为策略。", category: "机器学习", favorite: false },
+ { term: "Reinforcement Learning from Human Feedback", translation: "基于人工反馈的强化学习（RLHF）", explanation: "Reinforcement Learning from Human Feedback（RLHF）是一种强化学习技术，利用人类反馈来训练模型，以对齐人类价值观。", category: "人工智能", favorite: false },
+ { term: "relay", translation: "中继", explanation: "relay在计算机网络中是一种设备或协议，用于转发数据包或信号，以扩展网络覆盖范围或提高传输效率。", category: "计算机网络", favorite: false },
+ { term: "Relevancy", translation: "适切性", explanation: "在信息检索和搜索系统中，指查询结果与用户需求的相关程度，是衡量搜索质量的重要指标。", category: "计算机基础", favorite: false },
+ { term: "Reliability", translation: "可靠性", explanation: "系统或组件在规定条件下和时间内，持续正常执行其规定功能的能力，是系统质量的关键属性。", category: "软件工程", favorite: false },
+ { term: "Relying Party", translation: "依赖方", explanation: "在安全协议或身份认证中，指依赖来自另一方的断言或凭证来做出授权决策的一方，如服务提供者。", category: "网络安全", favorite: false },
+ { term: "Remove Assignments to Parameters", translation: "移除对参数的赋值", explanation: "一种代码重构方法，通过将传入参数赋值给局部变量来避免修改参数值，提高代码可读性和可维护性。", category: "软件工程", favorite: false },
+ { term: "Remove Control Flag", translation: "移除控制标记", explanation: "一种代码重构技术，通过使用break、return等语句替代控制标记变量，简化循环或条件逻辑的流程。", category: "软件工程", favorite: false },
+ { term: "Remove Middle Man", translation: "移除中间人", explanation: "一种代码重构方法，当某个类过度委托简单操作时，直接调用底层对象，减少不必要的间接层，简化设计。", category: "设计模式", favorite: false },
+ { term: "Remove Parameter", translation: "移除参数", explanation: "一种代码重构技术，当函数参数不再被使用时，移除该参数以简化函数签名，保持接口清晰。", category: "软件工程", favorite: false },
+ { term: "Remove Setting Method", translation: "移除配置函数", explanation: "一种代码重构方法，当某个字段应在对象创建时设值且后续不应更改时，移除其设置函数，确保字段不可变。", category: "软件工程", favorite: false },
+ { term: "Rename Method", translation: "函数改名", explanation: "一种代码重构技术，通过修改函数名称以更清晰地表达其意图或功能，提升代码的可读性和可维护性。", category: "软件工程", favorite: false },
+ { term: "Replace Array with Object", translation: "以对象取代数组", explanation: "一种代码重构方法，当数组元素代表不同概念时，用对象替换数组，使每个元素有明确的字段名，提高可读性。", category: "软件工程", favorite: false },
+ { term: "Replace Conditional with Polymorphism", translation: "以多态取代条件表达式", explanation: "通过创建子类并重写方法，用多态处理不同条件分支，减少复杂的条件判断，提高代码可扩展性。", category: "设计模式", favorite: false },
+ { term: "Replace Constructor with Factory Method", translation: "以工厂函数取代构造函数", explanation: "将构造函数替换为工厂方法，封装对象创建逻辑，提供更灵活的对象实例化方式，便于管理对象生命周期。", category: "设计模式", favorite: false },
+ { term: "Replace Data Value with Object", translation: "以对象取代数据值", explanation: "将简单的数据值封装为对象，增加相关行为和属性，提高代码的可读性和可维护性，避免数据散落。", category: "设计模式", favorite: false },
+ { term: "Replace Delegation with Inheritance", translation: "以继承取代委托", explanation: "当委托关系过于紧密时，改用继承来简化代码结构，使子类直接获得父类的功能，减少冗余委托调用。", category: "设计模式", favorite: false },
+ { term: "Replace Error 　 Code with Exception", translation: "以异常取代错误码", explanation: "用异常处理机制替代返回错误码的方式，使错误处理更清晰、集中，提升代码的可读性和健壮性。", category: "设计模式", favorite: false },
+ { term: "Replace Exception with Test", translation: "以测试取代异常", explanation: "在可能引发异常的操作前添加条件测试，避免不必要的异常抛出，提高代码效率和可预测性。", category: "设计模式", favorite: false },
+ { term: "Replace Inheritance with Delegation", translation: "以委托取代继承", explanation: "当继承导致类之间耦合过高时，改用委托关系，通过组合对象来实现功能，提高代码的灵活性和复用性。", category: "设计模式", favorite: false },
+ { term: "Replace Magic Number with Symbolic Constant", translation: "以字面常量取代魔法数", explanation: "将代码中的硬编码数字（魔法数）替换为有意义的常量，提高代码可读性和可维护性，便于统一修改。", category: "设计模式", favorite: false },
+ { term: "Replace Method with Method Object", translation: "以函数对象取代函数", explanation: "将复杂的方法提取为独立的对象，封装其状态和行为，使方法逻辑更清晰，便于测试和重构。", category: "设计模式", favorite: false },
+ { term: "Replace Nested Conditional with Guard Clauses", translation: "以卫语句取代嵌套条件表达式", explanation: "用卫语句（提前返回的条件检查）替代嵌套的条件表达式，简化代码结构，提高可读性和可维护性。", category: "设计模式", favorite: false },
+ { term: "Replace Parameter with Explicit Methods", translation: "以明确函数取代参数", explanation: "一种重构手法，将根据参数值执行不同行为的函数拆分为多个独立的明确函数，提高代码可读性。", category: "设计模式", favorite: false },
+ { term: "Replace Parameter with Methods", translation: "以函数取代参数", explanation: "一种重构手法，当参数可以通过调用已有函数获得时，直接调用函数代替传递参数，简化参数列表。", category: "设计模式", favorite: false },
+ { term: "Replace Record with Data Class", translation: "以数据类取代记录", explanation: "一种重构手法，将记录式数据结构（如结构体）转换为具有数据字段和简单行为的数据类，提升面向对象特性。", category: "设计模式", favorite: false },
+ { term: "Replace Subclass with Fields", translation: "以字段取代子类", explanation: "一种重构手法，当子类仅用于返回常量数据时，直接使用字段代替子类，简化继承结构。", category: "设计模式", favorite: false },
+ { term: "Replace Temp with Query", translation: "以查询取代临时变量", explanation: "一种重构手法，将临时变量替换为查询函数，避免重复计算，提高代码复用性和可维护性。", category: "设计模式", favorite: false },
+ { term: "Replace Type Code with Class", translation: "以类取代类型码", explanation: "一种重构手法，将表示类型的数字或字符串代码替换为专门的类，增强类型安全性和可扩展性。", category: "设计模式", favorite: false },
+ { term: "Replace Type Code with State/Strategy", translation: "以 State/Strategy 取代类型码", explanation: "一种重构手法，将类型码相关的行为封装到独立的 State 或 Strategy 对象中，实现行为动态变化。", category: "设计模式", favorite: false },
+ { term: "Replace Type Code with Subclass", translation: "以子类取代类型码", explanation: "一种重构手法，根据类型码创建不同的子类，将类型相关的行为分布到子类中，利用多态简化逻辑。", category: "设计模式", favorite: false },
+ { term: "reporting", translation: "报表", explanation: "指生成和展示数据汇总、分析结果的过程或系统，常用于业务决策支持，如财务报表、统计图表等。", category: "软件工程", favorite: false },
+ { term: "Repository", translation: "存储库；仓储；仓库；资源库", explanation: "在软件架构中，指封装数据访问逻辑的层，为领域模型提供集合式接口，隔离业务逻辑与数据存储细节。", category: "设计模式", favorite: false },
+ { term: "REpresentational State Transfer", translation: "表述性状态转移、表征性状态传输、具象状态传输（REST）", explanation: "一种软件架构风格，强调使用无状态通信和标准HTTP方法（如GET、POST）来操作资源，常用于Web API设计。", category: "软件工程", favorite: false },
+ { term: "request pipeline", translation: "请求管道", explanation: "指请求在服务器端处理过程中经过的一系列中间件或处理步骤，用于执行如认证、日志记录等任务。", category: "后端开发", favorite: false },
+ { term: "Requirements Churn", translation: "需求波动", explanation: "在软件开发过程中，需求频繁变更或增加的现象，可能导致项目延期和成本上升。", category: "软件工程", favorite: false },
+ { term: "reserved", translation: "专属", explanation: "指某个资源或标识符被特定实体占用或保留，以防止其他实体使用，常见于网络或系统资源分配。", category: "计算机基础", favorite: false },
+ { term: "resolution", translation: "解析", explanation: "指将问题或数据分解并找到解决方案的过程，如图像分辨率指像素密度，域名解析指将域名转换为IP地址。", category: "计算机基础", favorite: false },
+ { term: "Resource Acquisition Is Initialization", translation: "资源获取即初始化（RAII）", explanation: "一种编程技术，将资源（如内存、文件）的生命周期与对象绑定，在对象构造时获取资源，析构时自动释放。", category: "编程语言", favorite: false },
+ { term: "Resource Release Is Destruction", translation: "在构造时没有“获取”资源，但在析构时释放资源（RRID），一种 RAII 的特殊用法", explanation: "RAII的一种变体，对象在构造时不获取资源，但在析构时负责释放已分配的资源，用于资源清理。", category: "编程语言", favorite: false },
+ { term: "Resource-Oriented Architecture", translation: "面向资源的架构(ROA)", explanation: "一种架构设计方法，将系统建模为一组资源，每个资源可通过唯一标识符访问，常用于RESTful系统。", category: "软件工程", favorite: false },
+ { term: "Response Group", translation: "响应群", explanation: "指一组协同工作的组件或服务，共同处理并响应某个请求，常用于分布式系统或负载均衡场景。", category: "后端开发", favorite: false },
+ { term: "Return on Investment", translation: "投资回报（ROI）", explanation: "衡量投资效益的指标，计算为收益与成本之比，用于评估项目或技术的经济可行性。", category: "项目管理", favorite: false },
+ { term: "reverse proxy module", translation: "反向代理模块", explanation: "反向代理模块是一种服务器组件，用于接收客户端请求并转发给后端服务器，同时隐藏后端服务器的真实地址，常用于负载均衡和安全防护。", category: "计算机网络", favorite: false },
+ { term: "retail", translation: "零售版", explanation: "零售版指软件或硬件产品面向普通消费者销售的版本，通常包含完整功能和支持，与测试版或企业版相对。", category: "软件工程", favorite: false },
+ { term: "Rich Client", translation: "丰富客户端", explanation: "丰富客户端是一种客户端应用程序，具有强大的本地处理能力和用户界面，能独立运行或与服务器交互，提供更流畅的用户体验。", category: "前端开发", favorite: false },
+ { term: "Ripple Effect", translation: "涟漪效应", explanation: "涟漪效应指在用户界面中，当用户点击或触摸元素时产生的视觉反馈效果，如水波扩散，用于增强交互感知。", category: "前端开发", favorite: false },
+ { term: "RLHF", translation: "基于人工反馈的强化学习（Reinforcement Learning from Human Feedback）", explanation: "RLHF是一种机器学习方法，通过人类反馈来训练强化学习模型，使模型行为更符合人类偏好，常用于AI对齐和优化。", category: "人工智能", favorite: false },
+ { term: "role", translation: "角色", explanation: "角色在计算机系统中指用户或实体被分配的权限和职责集合，用于访问控制和权限管理，如管理员或普通用户。", category: "计算机基础", favorite: false },
+ { term: "Rolling Upgrade", translation: "滚动升级", explanation: "滚动升级是一种软件更新策略，逐步更新系统实例而不中断服务，确保高可用性，常用于分布式系统。", category: "软件工程", favorite: false },
+ { term: "round-robin", translation: "轮流（分配）；轮叫", explanation: "轮叫是一种调度算法，将任务或请求按顺序分配给一组资源，如服务器，以实现简单的负载均衡。", category: "算法", favorite: false },
+ { term: "round-tripping", translation: "还原；回传；往返，往返切换", explanation: "还原或往返指数据在不同格式或系统间转换后能无损恢复原状的过程，常用于数据交换和兼容性测试。", category: "计算机基础", favorite: false },
+ { term: "router", translation: "路由器", explanation: "路由器是网络设备，用于在不同网络间转发数据包，基于IP地址决定最佳路径，实现网络互联和通信。", category: "计算机网络", favorite: false },
+ { term: "row", translation: "行", explanation: "在数据库或表格中，行是水平排列的一组数据，代表一条完整记录，包含多个字段的值。", category: "数据库", favorite: false },
+ { term: "RPC", translation: "远程过程调用（Remote Procedure Call）", explanation: "RPC是一种网络通信协议，允许程序调用远程服务器上的函数或过程，就像调用本地函数一样，简化分布式系统开发。", category: "计算机网络", favorite: false },
+ { term: "RRID", translation: "Resource Release Is Destruction，在构造时没有“获取”资源，但在析构时释放资源，一种 RAII 的特殊用法", explanation: "RRID是RAII（资源获取即初始化）的一种特殊用法，在对象构造时不获取资源，但在析构时释放资源，用于管理资源生命周期。", category: "编程语言", favorite: false },
+ { term: "Saas", translation: "软件即服务（Software As A Service）", explanation: "SaaS是一种云计算服务模式，用户通过互联网访问和使用软件应用，而无需本地安装和维护，如在线办公套件。", category: "云计算", favorite: false },
+ { term: "Safe-to-Escape", translation: "安全逃逸", explanation: "安全逃逸指在编程中，数据或资源从安全上下文（如受保护区域）传递到不安全上下文时，可能引发安全风险的情况。", category: "编程语言", favorite: false },
+ { term: "Safe-to-Escape scope", translation: "安全逃逸范围", explanation: "安全逃逸范围定义了数据或资源在程序中可以被安全传递和使用的区域，超出此范围可能导致安全漏洞，如内存错误。", category: "编程语言", favorite: false },
+ { term: "salted password hashing", translation: "加盐密码哈希", explanation: "加盐密码哈希是一种密码存储技术，在哈希密码前添加随机字符串（盐），以增强安全性，防止彩虹表攻击。", category: "网络安全", favorite: false },
+ { term: "SAN", translation: "存储区域网络（Storage Area Network）", explanation: "SAN是一种高速专用网络，连接服务器和存储设备（如磁盘阵列），提供块级数据访问，用于集中存储管理。", category: "硬件架构", favorite: false },
+ { term: "SASL", translation: "简单认证与安全层", explanation: "SASL是一种网络协议框架，为连接协议添加认证支持，允许使用多种认证机制（如Kerberos）来确保通信安全。", category: "计算机网络", favorite: false },
+ { term: "Scalability", translation: "缩放性", explanation: "缩放性指系统处理增长负载的能力，包括水平缩放（增加更多节点）和垂直缩放（升级单个节点资源），以保持性能。", category: "软件工程", favorite: false },
+ { term: "Scalable Vector Graphic", translation: "可伸缩矢量图（SVG）", explanation: "一种基于XML的矢量图形格式，可在不失真的情况下任意缩放，常用于网页图标和图表。", category: "前端开发", favorite: false },
+ { term: "Scale", translation: "缩放", explanation: "指调整系统、图像或数据的尺寸或容量，以适应不同需求或负载变化的过程。", category: "计算机基础", favorite: false },
+ { term: "Scale Out", translation: "向外缩放", explanation: "通过增加更多节点或服务器来扩展系统处理能力，常用于分布式系统以提升性能和容量。", category: "云计算", favorite: false },
+ { term: "Scale Up", translation: "向上缩放", explanation: "通过升级单个节点的硬件资源（如CPU、内存）来提升系统性能，适用于垂直扩展场景。", category: "硬件架构", favorite: false },
+ { term: "scaling pattern", translation: "扩展模式", explanation: "描述系统扩展时采用的设计方法或策略，如水平扩展或垂直扩展，以确保可伸缩性。", category: "软件工程", favorite: false },
+ { term: "Schema (database)", translation: "架构（数据）", explanation: "数据库中的结构定义，描述数据如何组织、存储和关联，包括表、字段和约束等。", category: "数据库", favorite: false },
+ { term: "Schema (xml)", translation: "架构（xml）", explanation: "XML文档的结构定义，用于验证XML数据的格式和内容，确保其符合特定规范。", category: "计算机基础", favorite: false },
+ { term: "Scrum Master", translation: "Scrum 主管（SM）", explanation: "Scrum团队中的角色，负责确保团队遵循Scrum流程，移除障碍并促进高效协作。", category: "项目管理", favorite: false },
+ { term: "SDK", translation: "软件开发工具箱（Software Development Kits）", explanation: "一套工具和库的集合，帮助开发者创建特定平台或服务的应用程序，简化开发过程。", category: "开发工具", favorite: false },
+ { term: "seam", translation: "接缝", explanation: "软件中可替换或修改的边界点，便于在不影响其他部分的情况下进行测试或调整。", category: "软件工程", favorite: false },
+ { term: "Search Engine", translation: "搜索引擎（SE）", explanation: "搜索引擎是一种通过爬取、索引和排序网页信息，帮助用户快速查找互联网内容的系统，如Google、百度。", category: "计算机网络", favorite: false },
+ { term: "Search Engine Marketing", translation: "搜索引擎营销（SEM）", explanation: "搜索引擎营销是一种通过付费广告在搜索引擎结果页中推广网站或产品，以提高可见性和流量的营销策略。", category: "其他", favorite: false },
+ { term: "Search Engine Optimization", translation: "搜索引擎优化（SEO）", explanation: "搜索引擎优化是通过优化网站内容和结构，提高其在搜索引擎自然结果中的排名，从而吸引更多免费流量的技术。", category: "其他", favorite: false },
+ { term: "secondary storage", translation: "二级存储", explanation: "二级存储是计算机中用于长期存储数据的非易失性存储设备，如硬盘、SSD，比内存容量大但速度较慢。", category: "硬件架构", favorite: false },
+ { term: "Secure Socket Layer", translation: "安全套接层（SSL）", explanation: "安全套接层是一种用于在网络上加密数据传输的协议，确保通信安全，常用于网站HTTPS连接中。", category: "网络安全", favorite: false },
+ { term: "Security", translation: "安全（性）", explanation: "安全性指保护计算机系统、网络和数据免受未经授权的访问、攻击或损坏的措施和属性。", category: "网络安全", favorite: false },
+ { term: "Security Development Lifecycle", translation: "安全开发生命周期", explanation: "安全开发生命周期是一种在软件开发过程中集成安全实践的方法论，旨在从设计阶段就预防安全漏洞。", category: "软件工程", favorite: false },
+ { term: "Security Socket Layer", translation: "安全套接层", explanation: "安全套接层是一种加密协议，用于在网络通信中提供隐私和数据完整性，是TLS协议的前身。", category: "网络安全", favorite: false },
+ { term: "Security Token", translation: "安全令牌", explanation: "安全令牌是一种物理或数字设备，用于验证用户身份，通常通过生成一次性密码来增强登录安全性。", category: "网络安全", favorite: false },
+ { term: "Self Encapsulate Field", translation: "自封装字段", explanation: "自封装字段是一种设计模式，通过将类的字段设为私有并提供公共访问方法，以控制对字段的访问和修改。", category: "设计模式", favorite: false },
+ { term: "self-hosted", translation: "自管理主机", explanation: "指软件或服务部署在用户自己的服务器或基础设施上，而非依赖第三方云服务，用户拥有完全的控制权。", category: "软件工程", favorite: false },
+ { term: "Self-signed Certificate", translation: "自签名证书", explanation: "一种由创建者自己签发而非受信任的证书颁发机构签发的数字证书，通常用于测试或内部环境，浏览器会提示不安全。", category: "网络安全", favorite: false },
+ { term: "Semantic Kernel", translation: "语义核心 ", explanation: "微软推出的一个开源框架，用于将大型语言模型的能力集成到应用程序中，实现自然语言处理和AI驱动的功能。", category: "人工智能", favorite: false },
+ { term: "semantic monitoring", translation: "语义监控", explanation: "一种监控方法，不仅检查系统指标是否正常，还关注业务逻辑或语义层面的正确性，确保系统行为符合预期。", category: "软件工程", favorite: false },
+ { term: "Semantic Versioning", translation: "语义化版本控制", explanation: "一种版本号命名规范，格式为MAJOR.MINOR.PATCH，分别表示不兼容的改动、新增功能且向下兼容、修复bug且向下兼容。", category: "软件工程", favorite: false },
+ { term: "Separate Domain from Presentation", translation: "将领域和表述/显示分离", explanation: "一种软件设计原则，将核心业务逻辑（领域层）与用户界面或展示层分离，以提高代码的可维护性和可测试性。", category: "设计模式", favorite: false },
+ { term: "Separate Query from Modifier", translation: "将查询函数和修改函数分离", explanation: "一种编程原则，建议将查询数据（只读操作）和修改数据（写操作）的函数分开，避免副作用，提高代码清晰度。", category: "设计模式", favorite: false },
+ { term: "Serializable", translation: "可序列化", explanation: "指对象可以转换为字节序列（如存储或传输），并在需要时恢复为原始对象，常用于数据持久化或网络通信。", category: "编程语言", favorite: false },
+ { term: "Server Affinity", translation: "服务器绑定", explanation: "在负载均衡中，确保同一用户的请求始终被路由到同一台服务器，以维持会话状态或缓存一致性。", category: "计算机网络", favorite: false },
+ { term: "Server Driven Content Negotiation", translation: "服务器驱动的内容协商", explanation: "HTTP内容协商的一种方式，由服务器根据请求头（如Accept）自动选择最合适的资源表示（如JSON或XML）返回给客户端。", category: "计算机网络", favorite: false },
+ { term: "Server Side Render", translation: "服务器渲染（SSR）", explanation: "服务器渲染（SSR）是一种前端开发技术，指在服务器端生成完整的HTML页面，然后发送给浏览器，以提高首屏加载速度和SEO效果。", category: "前端开发", favorite: false },
+ { term: "Service Bus", translation: "服务总线", explanation: "服务总线是一种软件架构模式，用于在分布式系统中连接不同服务，实现消息传递、路由和集成，常用于微服务架构。", category: "软件工程", favorite: false },
+ { term: "Service Contract", translation: "服务合同", explanation: "服务合同是定义服务接口的规范，包括操作、参数、返回值等，用于确保服务提供方和消费方之间的通信一致性。", category: "软件工程", favorite: false },
+ { term: "Service Level Agreement", translation: "服务水平协议（SLA）", explanation: "服务水平协议（SLA）是服务提供方与客户之间的正式协议，明确服务性能指标（如可用性、响应时间）和违约责任。", category: "项目管理", favorite: false },
+ { term: "Service Provider", translation: "服务提供方", explanation: "服务提供方是指提供特定服务（如云计算、API等）的实体或组织，负责维护和交付服务以满足客户需求。", category: "云计算", favorite: false },
+ { term: "session jacking", translation: "会话劫持", explanation: "会话劫持是一种网络安全攻击，攻击者窃取或劫持用户的会话标识（如Cookie），以冒充用户身份访问受保护资源。", category: "网络安全", favorite: false },
+ { term: "Setting", translation: "设置", explanation: "设置指软件或系统中可配置的参数或选项，允许用户根据需求调整功能、界面或行为，以个性化使用体验。", category: "计算机基础", favorite: false },
+ { term: "Shared", translation: "共享；分享", explanation: "共享指资源（如文件、数据、设备）在多个用户或进程之间共同使用，以提高效率和协作，常见于网络和操作系统环境。", category: "计算机基础", favorite: false },
+ { term: "shared-memory data structure", translation: "共享内存数据结构", explanation: "共享内存数据结构是一种允许多个进程或线程通过共享内存区域访问和操作的数据结构，用于高效并发编程。", category: "数据结构", favorite: false },
+ { term: "Short-circuit evaluation", translation: "短路求值", explanation: "短路求值是一种编程语言优化技术，在逻辑表达式（如AND、OR）中，如果结果已能确定，则跳过后续计算，提高效率。", category: "编程语言", favorite: false },
+ { term: "Sign in", translation: "登录", explanation: "用户通过提供凭证（如用户名和密码）来验证身份，从而获得系统访问权限的过程。", category: "计算机基础", favorite: false },
+ { term: "Sign out", translation: "注销", explanation: "用户结束当前会话，退出系统或应用，通常用于安全地终止访问权限。", category: "计算机基础", favorite: false },
+ { term: "Signature", translation: "签名", explanation: "用于验证数据来源和完整性的数字标识，常见于加密、认证和代码签名中。", category: "网络安全", favorite: false },
+ { term: "Single Level of Abstraction Principle", translation: "单一抽象层次原则（SLAP）", explanation: "软件设计原则，要求一个函数或方法内的代码应处于同一抽象层次，以提高可读性。", category: "软件工程", favorite: false },
+ { term: "Single responsibility principle", translation: "单一职责原则（SRP）", explanation: "面向对象设计原则，指一个类应该只有一个引起变化的原因，即只负责一项功能。", category: "设计模式", favorite: false },
+ { term: "Single Page Application", translation: "单页面应用（SPA）", explanation: "一种Web应用，通过动态加载内容在单个页面中提供完整用户体验，无需重新加载整个页面。", category: "前端开发", favorite: false },
+ { term: "single point of failure", translation: "单一故障点（SPOF）", explanation: "系统中一旦失效就会导致整个系统停止工作的组件，是可靠性和容错设计中的关键风险点。", category: "硬件架构", favorite: false },
+ { term: "Singleton Pattern", translation: "单例模式", explanation: "一种创建型设计模式，确保一个类只有一个实例，并提供全局访问点，常用于资源管理。", category: "设计模式", favorite: false },
+ { term: "Site", translation: "站点", explanation: "指一个可通过网络访问的特定位置或集合，如网站、服务器群组或物理位置。", category: "计算机网络", favorite: false },
+ { term: "Site-to-Site", translation: "站点到站点", explanation: "一种网络连接方式，用于在不同地理位置的两个或多个网络之间建立安全通信隧道。", category: "计算机网络", favorite: false },
+ { term: "Skeleton-to-Thought", translation: "思维框架（SoT） ", explanation: "一种人工智能推理方法，先构建问题解决的逻辑框架（骨架），再填充具体细节（思考），以提高大语言模型解决复杂问题的能力。", category: "人工智能", favorite: false },
+ { term: "skip list", translation: "跳跃表", explanation: "一种有序的数据结构，通过建立多级索引来加速查找、插入和删除操作，是链表与二分查找思想的结合，时间复杂度平均为O(log n)。", category: "数据结构", favorite: false },
+ { term: "SLA", translation: "服务水平协议、服务等级协议（Service Level Agreement）", explanation: "服务提供方与客户之间的一份正式协议，明确规定了服务应达到的质量、可用性、性能等具体可量化的指标标准。", category: "软件工程", favorite: false },
+ { term: "Small", translation: "小型", explanation: "在软件开发中，常指一种编程范式或方法论，强调构建功能单一、职责明确的小型服务或组件，以提高系统的可维护性和灵活性。", category: "软件工程", favorite: false },
+ { term: "smart endpoint", translation: "智能端点", explanation: "在微服务架构中，指每个服务自身包含完整的业务逻辑和决策能力，并通过轻量级通信机制进行交互，与服务总线模式相对。", category: "软件工程", favorite: false },
+ { term: "snapshot", translation: "快照", explanation: "在计算机系统中，指在某一特定时间点对数据状态（如文件系统、数据库、虚拟机磁盘）的完整拷贝，常用于备份、恢复或版本回滚。", category: "计算机基础", favorite: false },
+ { term: "SOA", translation: "面向服务的架构（Service-Oriented Architecture）", explanation: "一种软件架构风格，将应用程序的不同功能单元拆分为独立的服务，并通过定义良好的接口和协议进行通信，以实现松耦合。", category: "软件工程", favorite: false },
+ { term: "SoT", translation: "思维框架（Skeleton-to-Thought） ", explanation: "一种人工智能推理方法，先构建问题解决的逻辑框架（骨架），再填充具体细节（思考），以提高大语言模型解决复杂问题的能力。", category: "人工智能", favorite: false },
+ { term: "Software as a Service", translation: "软件即服务（Saas）", explanation: "云计算的一种服务模式，用户通过互联网直接使用提供商运行在云基础设施上的应用程序，无需管理底层硬件和软件平台。", category: "云计算", favorite: false },
+ { term: "source lines of code", translation: "源代码行数（SLOC）", explanation: "一种衡量软件项目规模或复杂度的常用指标，指源代码中非空非注释的行数，常用于估算开发成本和工作量。", category: "软件工程", favorite: false },
+ { term: "Speculative Hierarchy", translation: "凭空想象的层次结构", explanation: "Speculative Hierarchy 指在软件设计中，基于假设而非实际需求构建的层次结构，可能导致过度设计。", category: "软件工程", favorite: false },
+ { term: "Split Temporary Variable", translation: "分解临时变量", explanation: "Split Temporary Variable 是重构技术，将一个临时变量拆分为多个，每个只承担单一职责，提高代码可读性。", category: "软件工程", favorite: false },
+ { term: "sprint", translation: "冲刺（敏捷开发术语）", explanation: "Sprint 是敏捷开发中的固定时间周期（通常1-4周），团队在此期间完成一组预定义的任务。", category: "项目管理", favorite: false },
+ { term: "sprint backlog", translation: "冲刺积压工作", explanation: "Sprint Backlog 是敏捷开发中，为当前冲刺选出的待完成任务列表，来自产品待办事项。", category: "项目管理", favorite: false },
+ { term: "SQL Database", translation: "SQL 数据库", explanation: "SQL Database 是使用结构化查询语言（SQL）管理和查询的关系型数据库，如MySQL、PostgreSQL。", category: "数据库", favorite: false },
+ { term: "SSKD", translation: "少量你所知道的开发人员（Small Set of Known Developers）", explanation: "SSKD 指在软件开发中，只有少数已知开发人员能访问或理解特定代码或系统部分的情况。", category: "软件工程", favorite: false },
+ { term: "SSO", translation: "单点登录（Single Sign-On）", explanation: "SSO 是一种身份验证方案，允许用户使用一组凭证登录多个相关但独立的软件系统。", category: "网络安全", favorite: false },
+ { term: "stage", translation: "阶段", explanation: "Stage 在开发流程中指一个特定步骤或时期，如开发、测试、部署阶段，用于划分工作。", category: "软件工程", favorite: false },
+ { term: "Staging", translation: "过渡（环境）", explanation: "Staging 是模拟生产环境的环境，用于最终测试和验证应用程序，确保上线前稳定。", category: "软件工程", favorite: false },
+ { term: "state indeterminism", translation: "状态不确定性", explanation: "State Indeterminism 指系统或程序的状态无法唯一确定，可能由于并发、随机性等因素导致。", category: "计算机基础", favorite: false },
+ { term: "State-based testing", translation: "基于状态的测试", explanation: "一种软件测试方法，通过验证系统在不同状态下的行为是否符合预期来检测缺陷。", category: "测试", favorite: false },
+ { term: "State Pattern", translation: "状态模式", explanation: "一种行为型设计模式，允许对象在其内部状态改变时改变其行为，看起来像是修改了类。", category: "设计模式", favorite: false },
+ { term: "Stateless", translation: "无状态", explanation: "指系统或组件不保存客户端的状态信息，每个请求都包含处理所需的所有数据。", category: "软件工程", favorite: false },
+ { term: "Sticky Session", translation: "黏性会话", explanation: "负载均衡中的一种会话管理方式，将同一用户的请求始终路由到同一台服务器，以保持会话状态。", category: "计算机网络", favorite: false },
+ { term: "Stickyness", translation: "黏性；黏度", explanation: "在软件架构中，指组件或服务之间的耦合程度，高黏性意味着难以独立修改或替换。", category: "软件工程", favorite: false },
+ { term: "story", translation: "故事（敏捷开发术语）", explanation: "敏捷开发中的需求描述单元，通常从用户角度描述一个功能或特性，作为开发任务的基础。", category: "项目管理", favorite: false },
+ { term: "Storage", translation: "存储", explanation: "计算机中用于持久保存数据的硬件或软件组件，如硬盘、内存或云存储服务。", category: "计算机基础", favorite: false },
+ { term: "Storage Account", translation: "存储账户", explanation: "云平台（如Azure）中用于管理存储资源的容器，可以包含Blob、文件、队列等存储服务。", category: "云计算", favorite: false },
+ { term: "Strangler Application Pattern", translation: "绞杀者模式", explanation: "一种渐进式重构模式，通过逐步用新组件替换旧系统的部分功能，最终取代整个遗留系统。", category: "软件工程", favorite: false },
+ { term: "strategic development tools", translation: "战略设计工具", explanation: "用于支持长期技术规划和架构设计的工具或方法，帮助团队对齐业务目标与技术决策。", category: "软件工程", favorite: false },
+ { term: "Strategy Pattern", translation: "策略模式", explanation: "一种行为设计模式，定义一系列算法，封装每个算法，并使它们可以互相替换，让算法独立于使用它的客户端变化。", category: "设计模式", favorite: false },
+ { term: "Stream", translation: "流", explanation: "在计算机中表示数据序列的抽象概念，用于处理输入输出操作，如文件读写或网络数据传输，支持顺序访问。", category: "计算机基础", favorite: false },
+ { term: "Structural Design Patterns", translation: "结构性设计模式", explanation: "设计模式的一类，关注如何组合对象和类以形成更大的结构，例如适配器模式或代理模式，提高代码灵活性。", category: "设计模式", favorite: false },
+ { term: "structure", translation: "结构", explanation: "在编程中组织数据的方式，如数组、链表或自定义类型，用于高效存储和访问信息，是构建程序的基础。", category: "数据结构", favorite: false },
+ { term: "Structured Systems Analysis and Design Methodology", translation: "结构化系统分析和设计方法（SSADM）", explanation: "一种系统开发方法，通过结构化步骤分析需求、设计系统，强调文档化和阶段性验证，常用于大型项目。", category: "软件工程", favorite: false },
+ { term: "Subnet", translation: "子网", explanation: "网络中的一个逻辑划分，将大网络分成多个小网络，以提高管理效率和安全性，通常通过IP地址和掩码实现。", category: "计算机网络", favorite: false },
+ { term: "Subordinate", translation: "附属", explanation: "在计算机系统中指从属或辅助组件，如数据库中的从服务器，依赖主组件运行，用于分担负载或备份。", category: "计算机基础", favorite: false },
+ { term: "Sub-region", translation: "子地域", explanation: "云计算或地理分区中的较小区域，用于资源部署和管理，提高可用性和性能，如AWS中的可用区。", category: "云计算", favorite: false },
+ { term: "Subdomain", translation: "子领域", explanation: "域名系统（DNS）的一部分，是主域名的分支，用于组织网站内容，如blog.example.com中的blog。", category: "计算机网络", favorite: false },
+ { term: "Subscription", translation: "订阅", explanation: "一种服务模式，用户定期支付费用以访问内容或功能，常见于软件即服务（SaaS）或流媒体平台。", category: "软件工程", favorite: false },
+ { term: "Substitute Algorithm", translation: "替换算法1", explanation: "指在代码重构中，用更清晰或更高效的算法替换原有算法，而不改变其外部行为。", category: "软件工程", favorite: false },
+ { term: "SW", translation: "Apache SkyWalking 的简写", explanation: "Apache SkyWalking 的简写，是一个开源的应用程序性能监控系统，用于分布式系统的观测和分析。", category: "开发工具", favorite: false },
+ { term: "symbol table", translation: "符号表", explanation: "编译器或解释器使用的一种数据结构，用于存储程序中标识符（如变量名、函数名）的信息及其属性。", category: "数据结构", favorite: false },
+ { term: "Synchronized Multimedia Integration Language", translation: "同步多媒体集成语言（SMIL）", explanation: "一种基于 XML 的标记语言，用于描述多媒体演示的时序、布局和交互，常用于网页中的音频和视频集成。", category: "前端开发", favorite: false },
+ { term: "syntactic sugar", translation: "语法糖", explanation: "编程语言中一种使代码更易读或编写的语法特性，它不增加新功能，但提供了更便捷的表达方式。", category: "编程语言", favorite: false },
+ { term: "System Under Test", translation: "测试目标系统（SUT）", explanation: "在软件测试中，指正在被测试的特定系统、组件或应用程序，是测试活动的焦点对象。", category: "测试", favorite: false },
+ { term: "Table", translation: "表", explanation: "数据库中存储数据的基本结构，由行和列组成，用于组织和表示关系型数据。", category: "数据库", favorite: false },
+ { term: "tactical development tools", translation: "战术实施工具", explanation: "在软件开发中，指用于解决具体、短期技术问题的工具或方法，侧重于即时实施而非长期战略规划。", category: "软件工程", favorite: false },
+ { term: "TAP,", translation: "基于任务的异步模式", explanation: "基于任务的异步模式，是 .NET 中用于简化异步编程的一种设计模式，通过 Task 类来管理异步操作。", category: "设计模式", favorite: false },
+ { term: "targeted testing", translation: "目标测试", explanation: "一种软件测试方法，专注于验证系统的特定功能、模块或需求，以确保其按预期工作。", category: "测试", favorite: false },
+ { term: "Task-based Asynchronous Pattern", translation: "基于任务的异步模式", explanation: "一种异步编程模型，使用Task对象表示异步操作，通过async/await关键字简化异步代码的编写和维护。", category: "编程语言", favorite: false },
+ { term: "TCP", translation: "传输控制协议（Transmission Control Protocol）", explanation: "一种面向连接的可靠传输协议，确保数据在网络中按序、无差错地传输，常用于Web浏览和文件传输。", category: "计算机网络", favorite: false },
+ { term: "TDD", translation: "测试驱动开发（Test-Driven Development）", explanation: "一种软件开发方法，先编写测试用例，再编写实现代码，通过不断重构来确保代码质量和功能正确性。", category: "测试", favorite: false },
+ { term: "Tease Apart Inheritance", translation: "梳理并分解继承体系", explanation: "一种重构技术，用于分解复杂的继承层次结构，通过提取类或接口来减少继承耦合，提高代码灵活性。", category: "软件工程", favorite: false },
+ { term: "technical bankruptcy", translation: "技术破产", explanation: "指技术债务积累到无法通过常规手段修复的程度，导致系统难以维护或必须彻底重写，通常源于长期忽视代码质量。", category: "软件工程", favorite: false },
+ { term: "Technical Debt", translation: "技术债务（TDBT）", explanation: "指在软件开发中，为快速实现功能而采用非最优方案所累积的额外维护成本，类似于债务，需后期偿还。", category: "软件工程", favorite: false },
+ { term: "Template Method Pattern", translation: "模板方法模式", explanation: "一种行为设计模式，定义算法的骨架，将某些步骤延迟到子类中实现，允许子类在不改变算法结构的情况下重写特定步骤。", category: "设计模式", favorite: false },
+ { term: "Tenant", translation: "租户", explanation: "在多租户架构中，指共享同一软件实例但数据相互隔离的独立用户或组织，常见于SaaS应用。", category: "云计算", favorite: false },
+ { term: "Terminus", translation: "端点", explanation: "指API或网络服务的访问地址，通常是一个URL，用于标识和定位特定资源或服务端点。", category: "计算机网络", favorite: false },
+ { term: "test doubles", translation: "测试替身", explanation: "指在单元测试中用于替代真实对象的模拟对象，如Mock、Stub等，以隔离被测代码并控制测试环境。", category: "测试", favorite: false },
+ { term: "Test-Driven Development", translation: "测试驱动开发（TDD）", explanation: "一种软件开发方法，先编写测试用例，再编写代码使测试通过，最后重构代码以提高质量。", category: "软件工程", favorite: false },
+ { term: "test harness", translation: "测试用具", explanation: "一组软件和测试数据，用于自动化测试执行，验证程序在不同条件下的行为是否符合预期。", category: "测试", favorite: false },
+ { term: "the normalization of deviance", translation: "异常正常化", explanation: "指在软件开发或运维中，逐渐接受异常或错误行为作为正常情况，可能导致风险积累和系统故障。", category: "软件工程", favorite: false },
+ { term: "Thin Client", translation: "瘦客户端", explanation: "一种客户端计算模型，依赖服务器处理大部分任务，本地只负责显示和简单输入，减少硬件需求。", category: "计算机网络", favorite: false },
+ { term: "Thread", translation: "线程", explanation: "操作系统能够调度的最小执行单元，属于同一进程的线程共享内存空间，提高程序并发性能。", category: "操作系统", favorite: false },
+ { term: "Thread Environment Block", translation: "线程环境块", explanation: "Windows操作系统中，每个线程拥有的数据结构，存储线程的特定信息，如线程本地存储和异常处理链。", category: "操作系统", favorite: false },
+ { term: "Thread Kernel Object", translation: "线程内核对象", explanation: "操作系统内核中用于管理线程的数据结构，包含线程状态、优先级和上下文等信息，供内核调度使用。", category: "操作系统", favorite: false },
+ { term: "Thread Pool", translation: "线程池", explanation: "一种管理多个线程的机制，预先创建一组线程并重复使用，以减少线程创建和销毁的开销，提高效率。", category: "操作系统", favorite: false },
+ { term: "Thread Starvation", translation: "线程饥荒", explanation: "在多线程环境中，某些线程因优先级低或资源竞争而长时间无法获得CPU时间，导致执行延迟或停滞。", category: "操作系统", favorite: false },
+ { term: "Throttle", translation: "节流；限速", explanation: "控制数据流或请求速率的技术，防止系统过载，常用于网络流量管理或API调用限制以保障稳定性。", category: "计算机网络", favorite: false },
+ { term: "Timestamp", translation: "时间戳", explanation: "Timestamp 是表示特定时间点的数字或字符串，通常记录事件发生的日期和时间，用于日志记录、数据同步等场景。", category: "计算机基础", favorite: false },
+ { term: "Throughput", translation: "吞吐量", explanation: "Throughput 指系统在单位时间内处理的数据量或任务数，衡量系统性能，如网络带宽或服务器处理能力。", category: "计算机网络", favorite: false },
+ { term: "TNP", translation: "交通网络提供者（Transportation Network Providers）", explanation: "TNP 是交通网络提供者的缩写，指提供交通服务的平台或公司，如网约车服务，属于特定行业术语。", category: "其他", favorite: false },
+ { term: "TOFU", translation: "首次使用时信任（Trust On First Use）", explanation: "TOFU 是首次使用时信任的缩写，指在首次连接时自动信任未知实体，常用于安全协议中简化初始设置。", category: "网络安全", favorite: false },
+ { term: "Topic", translation: "主题", explanation: "Topic 在计算机中常指消息队列或发布-订阅系统中的主题，用于分类和路由消息，实现异步通信。", category: "软件工程", favorite: false },
+ { term: "Topology", translation: "拓扑结构", explanation: "Topology 描述网络或系统中组件之间的连接和布局关系，如星型、总线型拓扑，影响性能和可靠性。", category: "计算机网络", favorite: false },
+ { term: "Token", translation: "令牌", explanation: "Token 是用于身份验证或授权的凭证，如访问令牌，确保系统安全，允许用户或应用执行特定操作。", category: "网络安全", favorite: false },
+ { term: "Top-level statements", translation: "顶级语句", explanation: "Top-level statements 指编程中无需显式定义主函数即可执行的代码，简化程序结构，常见于现代语言如C#。", category: "编程语言", favorite: false },
+ { term: "ToT", translation: "思维树（Tree-of-Thought）", explanation: "ToT 是思维树的缩写，是一种人工智能推理方法，通过树状结构探索多种思路路径，提升问题解决能力。", category: "人工智能", favorite: false },
+ { term: "TPL", translation: "任务并行库", explanation: "TPL 是任务并行库的缩写，是.NET框架中的库，用于简化并行编程，提高多核处理器上的应用性能。", category: "编程语言", favorite: false },
+ { term: "(Code) Tracing", translation: "（代码）追踪", explanation: "指通过逐步执行代码来理解程序逻辑或调试的过程，常用于教学和问题排查。", category: "计算机基础", favorite: false },
+ { term: "Transaction", translation: "事务", explanation: "数据库或系统中一组不可分割的操作单元，要么全部成功，要么全部失败，确保数据一致性。", category: "数据库", favorite: false },
+ { term: "Transaction Script", translation: "事务脚本", explanation: "一种简单的设计模式，将业务逻辑直接组织在脚本中，常用于小型应用或快速原型开发。", category: "设计模式", favorite: false },
+ { term: "Transient Error", translation: "瞬时错误", explanation: "指临时性、可自动恢复的错误，通常由网络波动或资源暂时不可用引起，无需人工干预。", category: "软件工程", favorite: false },
+ { term: "Transparent Data Encryption", translation: "透明数据加密", explanation: "一种数据库加密技术，在存储和检索数据时自动加解密，对应用程序透明，增强数据安全性。", category: "数据库", favorite: false },
+ { term: "Transportation Network Providers", translation: "交通网络提供者（TNP）", explanation: "指提供交通网络服务的公司或平台，如网约车服务，通过技术连接乘客与司机。", category: "其他", favorite: false },
+ { term: "Tree-of-Thought", translation: "思维树（ToT）", explanation: "一种人工智能推理方法，通过树状结构探索多个思维路径，以提升复杂问题解决的准确性和效率。", category: "人工智能", favorite: false },
+ { term: "Type Bloat", translation: "类型膨胀", explanation: "指在编程中过度使用或定义过多类型，导致代码库复杂、难以维护的现象，常见于静态类型语言。", category: "编程语言", favorite: false },
+ { term: "UAT", translation: "用户验收测试（User Acceptance Testing）", explanation: "软件开发的最后测试阶段，由最终用户验证系统是否符合业务需求和预期，确保可交付使用。", category: "测试", favorite: false },
+ { term: "Ubiquitous Computing", translation: "普存计算", explanation: "一种计算范式，强调计算能力无缝融入日常环境和对象中，用户无需直接操作设备，如物联网应用。", category: "计算机基础", favorite: false },
+ { term: "Ubiquitous Language", translation: "统一语言", explanation: "统一语言是领域驱动设计中的核心概念，指在开发团队和业务专家之间建立一套共享的、无歧义的术语，确保沟通一致。", category: "软件工程", favorite: false },
+ { term: "UDDI", translation: "通用描述、发现与集成服务（Universal Description, Discovery, and Integration）", explanation: "UDDI是一种基于Web的、分布式的注册服务标准，用于发布和发现Web服务，类似于服务目录。", category: "计算机网络", favorite: false },
+ { term: "UI", translation: "用户界面，包括视觉设计、交互设计和用户体验（User Interface）", explanation: "UI是用户与软件或硬件交互的界面，包括视觉元素、交互逻辑和用户体验设计，旨在提升易用性。", category: "前端开发", favorite: false },
+ { term: "Uncommitted", translation: "未提交（的）", explanation: "在数据库事务中，未提交的状态指事务尚未完成，数据修改可能被回滚，不持久化到数据库。", category: "数据库", favorite: false },
+ { term: "Update Domain", translation: "更新域", explanation: "更新域是云计算或分布式系统中用于分组和管理服务更新的逻辑单元，确保高可用性，更新时仅影响部分实例。", category: "云计算", favorite: false },
+ { term: "unbox", translation: "拆箱", explanation: "拆箱是将值类型从对象（如装箱后的引用类型）转换为原始值类型的过程，常见于C#等编程语言。", category: "编程语言", favorite: false },
+ { term: "under-post", translation: "提交不足", explanation: "提交不足是Web安全漏洞，指表单提交时缺少必要参数或验证，可能导致数据不一致或安全风险。", category: "网络安全", favorite: false },
+ { term: "undirected graph", translation: "无向图", explanation: "无向图是一种图数据结构，其中边没有方向，表示节点间双向关系，常用于建模网络或社交关系。", category: "数据结构", favorite: false },
+ { term: "Unexploited Encapsulation", translation: "未利用封装", explanation: "未利用封装是代码坏味道，指类或模块的封装性未被充分使用，导致内部细节暴露，降低可维护性。", category: "软件工程", favorite: false },
+ { term: "Unfactored Hierarchy", translation: "未归并的层次结构", explanation: "未归并的层次结构是代码坏味道，指继承层次中存在重复代码或结构，未通过重构合并，增加复杂度。", category: "软件工程", favorite: false },
+ { term: "Unified Modeling Language", translation: "统一建模语言（UML）", explanation: "统一建模语言（UML）是一种标准化的建模语言，用于可视化、描述、构建和记录软件系统的结构和行为。", category: "软件工程", favorite: false },
+ { term: "Uniform Interface", translation: "统一接口", explanation: "统一接口是REST架构风格的核心原则之一，要求所有资源通过一致的接口（如HTTP方法）进行访问，简化了系统交互。", category: "后端开发", favorite: false },
+ { term: "Uniform Resource Locator", translation: "统一资源定位符（URL）", explanation: "统一资源定位符（URL）是互联网上用于标识和定位资源（如网页、文件）的地址字符串，由协议、域名和路径等组成。", category: "计算机网络", favorite: false },
+ { term: "unit of work", translation: "工作单元", explanation: "工作单元是一种设计模式，用于管理一组相关操作（如数据库事务），确保它们作为一个原子单元执行，以维护数据一致性。", category: "设计模式", favorite: false },
+ { term: "Unit test", translation: "单元测试", explanation: "单元测试是针对软件中最小可测试单元（如函数或方法）的自动化测试，用于验证其功能是否符合预期，确保代码质量。", category: "测试", favorite: false },
+ { term: "unit test coverage", translation: "单元测试覆盖率", explanation: "单元测试覆盖率是衡量单元测试覆盖代码程度的指标，通常以百分比表示，用于评估测试的全面性和代码可靠性。", category: "测试", favorite: false },
+ { term: "unit-testing harnesses", translation: "单元测试用例", explanation: "单元测试用例是用于执行单元测试的框架或工具集，提供测试环境、断言和运行机制，帮助自动化测试过程。", category: "测试", favorite: false },
+ { term: "unmanaged code", translation: "非托管代码", explanation: "非托管代码是指在.NET等托管环境中，不由运行时（如CLR）直接管理的代码，通常涉及直接内存操作和外部资源调用。", category: "编程语言", favorite: false },
+ { term: "Unmanaged Pointers", translation: "非托管指针", explanation: "非托管指针是在托管代码（如C#）中使用的指针类型，允许直接访问内存地址，通常用于与非托管代码交互或性能优化。", category: "编程语言", favorite: false },
+ { term: "Unnecessary Abstract", translation: "不必要的抽象", explanation: "不必要的抽象是指在软件设计中过度使用抽象层，导致代码复杂化、难以维护，而没有带来实际好处，应避免以保持简洁性。", category: "软件工程", favorite: false },
+ { term: "Unnecessary Hierarchy", translation: "不必要的层次结构", explanation: "指在软件设计中，过度使用层级结构导致代码复杂、维护困难，而没有带来实际价值的设计问题。", category: "软件工程", favorite: false },
+ { term: "unnecessary overhead", translation: "不必要的开销", explanation: "指在计算机系统或程序中，引入的额外资源消耗（如时间、内存）对核心功能没有贡献，反而降低效率。", category: "计算机基础", favorite: false },
+ { term: "Unutilized Abstraction", translation: "未用的抽象", explanation: "指在软件设计中，创建了抽象层或接口，但实际未被使用或过度设计，增加了不必要的复杂性。", category: "软件工程", favorite: false },
+ { term: "Usability Review", translation: "可用性评估", explanation: "指对软件或产品的用户界面和交互进行评估，以确保其易用性、效率和用户满意度。", category: "前端开发", favorite: false },
+ { term: "User Acceptance Test", translation: "接受度测试（UAT）", explanation: "指在软件开发末期，由最终用户执行测试，以验证系统是否符合业务需求和预期，决定是否接受交付。", category: "测试", favorite: false },
+ { term: "User Analysis", translation: "用户分析", explanation: "指通过研究用户行为、需求和特征，为产品设计提供依据，以优化用户体验和功能。", category: "软件工程", favorite: false },
+ { term: "User Datagram Protocol", translation: "用户数据报协议（UDP）", explanation: "是一种无连接的传输层协议，提供快速但不可靠的数据传输，常用于实时应用如视频流或DNS查询。", category: "计算机网络", favorite: false },
+ { term: "User Interface", translation: "用户界面，包括视觉设计、交互设计和用户体验（UI）", explanation: "指用户与计算机系统交互的界面，包括视觉元素、交互逻辑和整体体验，旨在提升用户操作便利性。", category: "前端开发", favorite: false },
+ { term: "User Mode Stack", translation: "用户模式栈", explanation: "指在操作系统中，用户进程运行时使用的栈内存区域，用于存储函数调用、局部变量等，与内核模式栈隔离。", category: "操作系统", favorite: false },
+ { term: "Value Object", translation: "值对象", explanation: "是一种设计模式中的对象，其值由其属性决定，不可变且无标识，常用于表示简单数据如货币或日期。", category: "设计模式", favorite: false },
+ { term: "variant", translation: "变体", explanation: "variant 指同一数据结构或对象的不同表现形式或版本，常用于表示可变的、具有多种可能状态的数据类型。", category: "数据结构", favorite: false },
+ { term: "Variation Encapsulation Principle", translation: "变化封装原则（VEP）", explanation: "Variation Encapsulation Principle (VEP) 是一种软件设计原则，强调将系统中可能变化的部分封装起来，以提高代码的可维护性和扩展性。", category: "设计模式", favorite: false },
+ { term: "versionable interaction contract", translation: "可以进行版本控制的交互契约", explanation: "versionable interaction contract 指在分布式系统中，服务间交互的契约（如API）支持版本控制，允许不同版本共存和演进。", category: "软件工程", favorite: false },
+ { term: "Vertical Scale", translation: "垂直缩放", explanation: "Vertical Scale 指通过增加单个服务器的资源（如CPU、内存）来提升系统性能，与水平扩展相对。", category: "硬件架构", favorite: false },
+ { term: "VES", translation: "虚拟执行系统（Visual Execution System）", explanation: "VES (虚拟执行系统) 是一种运行时环境，用于执行和管理虚拟化或跨平台的代码，常见于.NET等框架中。", category: "计算机基础", favorite: false },
+ { term: "viscosity", translation: "粘滞性", explanation: "viscosity 在软件工程中，指系统或代码难以修改和演进的特性，高粘滞性通常意味着维护成本高。", category: "软件工程", favorite: false },
+ { term: "VIP", translation: "虚拟 IP（或不译）", explanation: "VIP (虚拟IP) 是一个不绑定到特定物理网络接口的IP地址，常用于高可用性和负载均衡场景。", category: "计算机网络", favorite: false },
+ { term: "VIP Swap", translation: "VIP 交换", explanation: "VIP Swap 是一种网络技术，允许在不中断服务的情况下，将虚拟IP地址从一个服务器切换到另一个服务器。", category: "计算机网络", favorite: false },
+ { term: "Virtual Execution System", translation: "虚拟执行系统（VES）", explanation: "Virtual Execution System (虚拟执行系统) 是提供代码执行环境的软件层，支持跨平台运行和资源管理，如Java虚拟机。", category: "计算机基础", favorite: false },
+ { term: "Virtual Network", translation: "虚拟网络", explanation: "Virtual Network 指通过软件定义的逻辑网络，在物理网络基础上创建隔离的、可定制的网络环境，常用于云计算。", category: "云计算", favorite: false },
+ { term: "Virtual Machine", translation: "虚拟机", explanation: "虚拟机是一种软件模拟的计算机系统，可以在物理主机上运行多个独立的操作系统和应用，实现资源隔离和高效利用。", category: "操作系统", favorite: false },
+ { term: "Virtual Private Network", translation: "虚拟专用网络（VPN）", explanation: "虚拟专用网络是一种通过加密技术在公共网络上建立安全连接的技术，用于远程访问和保护数据传输隐私。", category: "计算机网络", favorite: false },
+ { term: "Virtual Reality", translation: "虚拟现实（VR）", explanation: "虚拟现实是一种计算机生成的模拟环境，用户可以通过头戴设备等交互沉浸其中，常用于游戏、培训和模拟。", category: "其他", favorite: false },
+ { term: "viscosity", translation: "粘稠性", explanation: "粘稠性在计算机中通常指系统或代码的复杂性导致难以修改或维护的特性，影响软件的可维护性和灵活性。", category: "软件工程", favorite: false },
+ { term: "Visitor Pattern", translation: "访问者模式", explanation: "访问者模式是一种行为设计模式，允许在不修改对象结构的情况下定义新操作，将算法与对象结构分离。", category: "设计模式", favorite: false },
+ { term: "VLO", translation: "团体批量许可证；大量采购授权合约（Volume Licensing for Organizations）", explanation: "团体批量许可证是企业或组织大量采购软件授权的一种合约方式，通常提供成本优惠和集中管理功能。", category: "软件工程", favorite: false },
+ { term: "VOL", translation: "团体批量许可证；大量采购授权合约（Volume Licensing for Organizations）", explanation: "团体批量许可证是企业或组织大量采购软件授权的一种合约方式，通常提供成本优惠和集中管理功能。", category: "软件工程", favorite: false },
+ { term: "Volume Licensing for Organizations", translation: "团体批量许可证；大量采购授权合约（VOL 或 VLO）", explanation: "团体批量许可证是企业或组织大量采购软件授权的一种合约方式，通常提供成本优惠和集中管理功能。", category: "软件工程", favorite: false },
+ { term: "VPC", translation: "虚拟私有云（Virtual Private Cloud）", explanation: "虚拟私有云是一种在公共云中创建的隔离网络环境，允许用户自定义网络配置并安全地部署资源。", category: "云计算", favorite: false },
+ { term: "VPN", translation: "虚拟专用网络（Virtual Private Network）", explanation: "虚拟专用网络是一种通过加密技术在公共网络上建立安全连接的技术，用于远程访问和保护数据传输隐私。", category: "计算机网络", favorite: false },
+ { term: "WCF", translation: "Windows 通讯开发平台（Windows Comminication Foundation）", explanation: "WCF是微软开发的用于构建面向服务的应用程序的框架，支持多种通信协议和数据格式，便于分布式系统间的交互。", category: "后端开发", favorite: false },
+ { term: "Weak Generational Hypothesis", translation: "弱分代假设", explanation: "弱分代假设是垃圾回收中的理论，认为大多数对象生命周期很短，少数对象存活时间长，用于优化内存管理效率。", category: "编程语言", favorite: false },
+ { term: "Wearable Device", translation: "可穿戴设备", explanation: "可穿戴设备是集成计算功能的便携式电子设备，如智能手表或眼镜，用于健康监测、通信或信息显示。", category: "硬件架构", favorite: false },
+ { term: "Web Role", translation: "网站角色", explanation: "网站角色是云计算平台（如Azure）中的一种角色类型，专门用于托管和运行Web应用程序，提供可扩展的Web服务。", category: "云计算", favorite: false },
+ { term: "Web Scraping", translation: "网络爬虫", explanation: "网络爬虫是自动从互联网上抓取和提取数据的程序或脚本，常用于搜索引擎、数据分析或内容聚合。", category: "软件工程", favorite: false },
+ { term: "Web Service", translation: "网络服务", explanation: "网络服务是基于标准协议（如HTTP和XML）的软件系统，允许不同应用程序通过网络进行交互和数据交换。", category: "后端开发", favorite: false },
+ { term: "Web Service Definition Language", translation: "Web 服务定义语言（WSDL）", explanation: "WSDL是一种基于XML的语言，用于描述网络服务的功能、位置和通信方式，使客户端能自动发现和使用服务。", category: "后端开发", favorite: false },
+ { term: "Web Sites", translation: "网站", explanation: "网站是由多个网页组成的集合，通过互联网访问，提供信息、服务或交互功能，通常基于Web技术构建。", category: "前端开发", favorite: false },
+ { term: "Weighted Method per Class", translation: "类累计圈复杂度（WMC）", explanation: "WMC是面向对象度量中的一个指标，计算类中所有方法的圈复杂度之和，用于评估类的复杂度和维护难度。", category: "软件工程", favorite: false },
+ { term: "WF", translation: "工作流（WIndows Workflow）", explanation: "WF是微软的工作流框架，用于设计和执行自动化业务流程，支持可视化建模和与应用程序集成。", category: "后端开发", favorite: false },
+ { term: "Wide Hierarchy", translation: "过宽的层次结构", explanation: "指在面向对象设计中，一个类拥有过多直接子类，导致继承结构过于扁平，可能影响代码的可维护性和扩展性。", category: "软件工程", favorite: false },
+ { term: "Windows Comminication Foundation", translation: "分布式通信（WCF）", explanation: "微软开发的框架，用于构建面向服务的应用程序，支持跨进程和跨机器的分布式通信。", category: "后端开发", favorite: false },
+ { term: "Windows Internet Name Service", translation: "Windows Internet 命名服务（WINS）", explanation: "微软的旧有网络服务，用于将NetBIOS名称解析为IP地址，主要在早期Windows网络中提供名称解析功能。", category: "计算机网络", favorite: false },
+ { term: "Windows Management Instrumentation", translation: "Windows 管理规范（WMI）", explanation: "微软提供的一套管理工具和接口，允许通过脚本或程序来监控和控制Windows操作系统中的硬件、软件和网络组件。", category: "操作系统", favorite: false },
+ { term: "Windows Presentation Foundation", translation: "富客户端表示（WPF）", explanation: "微软的UI框架，用于创建具有丰富图形和多媒体功能的Windows桌面应用程序，支持XAML标记语言。", category: "前端开发", favorite: false },
+ { term: "Windows Workflow", translation: "工作流（WF）", explanation: "微软的框架，用于在应用程序中设计、执行和管理工作流，支持业务流程自动化和长时间运行的任务。", category: "软件工程", favorite: false },
+ { term: "WINS", translation: "Windows Internet 命名服务（Windows Internet Name Service）", explanation: "Windows Internet Name Service的缩写，是一种将NetBIOS名称映射到IP地址的网络服务，用于早期Windows网络环境。", category: "计算机网络", favorite: false },
+ { term: "WINS Proxy", translation: "WINS 代理", explanation: "一种网络组件，代表非WINS客户端向WINS服务器转发名称解析请求，以支持混合网络环境中的名称解析。", category: "计算机网络", favorite: false },
+ { term: "WINS Resource", translation: "WINS 资源", explanation: "在WINS服务中，指可管理的对象，如静态映射或复制伙伴，用于配置和维护WINS数据库中的记录。", category: "计算机网络", favorite: false },
+ { term: "wireless communication", translation: "无线通讯", explanation: "通过无线电波或红外线等无线介质传输数据和信息的技术，包括Wi-Fi、蓝牙、蜂窝网络等多种形式。", category: "计算机网络", favorite: false },
+ { term: "WMI", translation: "Windows 管理规范（Windows Management Instrumentation）", explanation: "WMI是微软Windows操作系统中的一套管理技术，用于管理和监控本地或远程计算机的硬件、软件和系统信息。", category: "操作系统", favorite: false },
+ { term: "Worker Role", translation: "辅助角色", explanation: "Worker Role是微软Azure云计算平台中的一种角色，用于运行后台处理任务，如数据处理或计算密集型操作，通常无用户界面。", category: "云计算", favorite: false },
+ { term: "Workflow", translation: "工作流", explanation: "Workflow指一系列自动化或手动步骤，用于定义和管理业务流程，确保任务按顺序执行，提高效率和一致性。", category: "软件工程", favorite: false },
+ { term: "workgroup", translation: "工作组", explanation: "工作组是计算机网络中的一种简单分组方式，用于在局域网内共享文件和打印机，无需中央服务器，适合小型网络环境。", category: "计算机网络", favorite: false },
+ { term: "World Wide Web Consortium", translation: "万维网联盟（W3C）", explanation: "万维网联盟（W3C）是一个国际组织，负责制定和维护Web标准，如HTML、CSS和XML，以确保Web的互操作性和长期发展。", category: "计算机基础", favorite: false },
+ { term: "WPF", translation: "富客户端表示（Windows Presentation Foundation）", explanation: "WPF是微软的UI框架，用于创建Windows桌面应用程序，支持丰富的图形、动画和数据绑定，基于XAML标记语言。", category: "前端开发", favorite: false },
+ { term: "writebehind", translation: "后写式", explanation: "writebehind是一种缓存策略，数据先写入缓存，再异步写入持久存储（如数据库），以提高写入性能和响应速度。", category: "数据库", favorite: false },
+ { term: "X.509v3 certificate", translation: "X.509 证书", explanation: "X.509v3证书是一种数字证书标准，用于在互联网上验证身份和加密通信，常见于SSL/TLS协议中确保网站安全。", category: "网络安全", favorite: false },
+ { term: "XaaS", translation: "Everything as a Service，一切皆服务", explanation: "XaaS是云计算模型，指一切皆服务，包括软件、平台、基础设施等，通过互联网按需提供，如SaaS、PaaS、IaaS。", category: "云计算", favorite: false },
+ { term: "XML", translation: "可扩展标记语言（Extensible Markup Language）", explanation: "XML是一种标记语言，用于存储和传输结构化数据，具有可扩展性，广泛用于Web服务、配置文件和数据交换场景。", category: "计算机基础", favorite: false },
+ { term: "XOR", translation: "异或（Exclusive OR）", explanation: "XOR（异或）是一种逻辑运算，当两个输入值不同时输出为真，相同时输出为假。常用于编程中的位操作和加密算法。", category: "计算机基础", favorite: false },
+ { term: "XUL", translation: "XML 用户界面语言（XML User Interface Language）", explanation: "XUL（XML用户界面语言）是一种基于XML的标记语言，用于创建跨平台应用程序的用户界面，主要用于Mozilla项目如Firefox。", category: "前端开发", favorite: false },
+ { term: "YAGNI", translation: "原则，不需要原则（You Aren't Gonna Need It），“你不会用到它”", explanation: "YAGNI（你不会用到它）是软件工程中的一条原则，强调只实现当前需要的功能，避免过度设计，以提高开发效率。", category: "软件工程", favorite: false },
+ { term: "Zero-downtime Upgrade", translation: "零停机升级", explanation: "零停机升级是一种系统维护技术，允许在不中断服务的情况下更新软件或硬件，确保高可用性。", category: "软件工程", favorite: false },
+ { term: "zip disk", translation: "压缩磁盘", explanation: "压缩磁盘是一种物理存储介质，使用高容量可移动磁盘技术，主要用于数据备份和存储，现已较少使用。", category: "硬件架构", favorite: false },
+ { term: "zone", translation: "区域", explanation: "区域在计算机网络中通常指DNS（域名系统）的一个部分，代表一个域名空间的管理范围，用于组织域名记录。", category: "计算机网络", favorite: false },
+ { term: "zone list", translation: "区域列表", explanation: "区域列表是DNS中记录的多个区域的集合，用于管理和查询不同域名空间的信息，提高域名解析效率。", category: "计算机网络", favorite: false },
+ { term: "zone transfer", translation: "区域传送", explanation: "区域传送是DNS中的一种机制，允许从主DNS服务器向从服务器复制区域数据，以确保数据一致性和冗余。", category: "计算机网络", favorite: false }
+        ];
+
+        // ==================== 状态管理 ====================
+        let currentView = 'all';  // 'all' 或 'favorite'
+        let currentCategory = '所有分类';
+        let searchText = '';
+        let expandedWord = null;  // 当前展开的单词term
+
+        // ==================== 工具函数 ====================
+        
+        // 获取所有唯一分类
+        function getUniqueCategories() {
+            const categories = ['所有分类', ...new Set(words.map(w => w.category))];
+            return categories;
+        }
+
+        // 获取分类下的单词数量
+        function getCategoryCount(category) {
+            if (category === '所有分类') {
+                return getFilteredWordsByView('all').length;
+            }
+            return getFilteredWordsByView('all').filter(w => w.category === category).length;
+        }
+
+        // 获取收藏数量
+        function getFavoriteCount() {
+            return words.filter(w => w.favorite).length;
+        }
+
+        // 根据当前视图筛选（不考虑分类和搜索）
+        function getFilteredWordsByView(view) {
+            if (view === 'favorite') {
+                return words.filter(w => w.favorite);
+            }
+            return words;  // all
+        }
+
+        // 获取最终显示的单词列表（综合考虑视图、分类、搜索）
+        function getDisplayWords() {
+            // 先按视图筛选（全部/收藏）
+            let filtered = getFilteredWordsByView(currentView);
+            
+            // 再按分类筛选
+            if (currentCategory !== '所有分类') {
+                filtered = filtered.filter(w => w.category === currentCategory);
+            }
+            
+            // 最后按搜索筛选
+            if (searchText.trim() !== '') {
+                const searchLower = searchText.toLowerCase().trim();
+                filtered = filtered.filter(w => 
+                    w.term.toLowerCase().includes(searchLower) ||
+                    w.translation.toLowerCase().includes(searchLower) ||
+                    w.explanation.toLowerCase().includes(searchLower) ||
+                    w.category.toLowerCase().includes(searchLower)
+                );
+            }
+            
+            return filtered;
+        }
+
+        // ==================== 渲染函数 ====================
+        
+        // 渲染左侧分类列表
+        function renderCategories() {
+            const categories = getUniqueCategories();
+            const categoryList = document.getElementById('categoryList');
+            
+            let html = '<div class="category-header">📌 分类</div>';
+            
+            categories.forEach(cat => {
+                const count = getCategoryCount(cat);
+                // 如果数量为0且不是"所有分类"，不显示
+                if (count === 0 && cat !== '所有分类') return;
+                
+                let icon = '📁';
+                if (cat === '所有分类') icon = '📋';
+                else if (cat.includes('网络')) icon = '🌐';
+                else if (cat.includes('数据')) icon = '🗄️';
+                else if (cat.includes('设计')) icon = '🎨';
+                else if (cat.includes('面向对象')) icon = '🔷';
+                else if (cat.includes('操作')) icon = '⚙️';
+                else if (cat.includes('开发')) icon = '🛠️';
+                
+                const isActive = (currentCategory === cat);
+                
+                html += `
+                    <div class="category-item ${isActive ? 'active' : ''}" 
+                         onclick="selectCategory('${cat.replace(/'/g, "\\'")}')">
+                        <span class="category-name">
+                            <span class="category-icon">${icon}</span>
+                            ${cat}
+                        </span>
+                        <span class="category-count">${count}</span>
+                    </div>
+                `;
+            });
+            
+            categoryList.innerHTML = html;
+        }
+
+        // 渲染右侧单词列表
+        function renderWords() {
+            const displayWords = getDisplayWords();
+            const wordList = document.getElementById('wordList');
+            
+            // 更新统计信息
+            const totalWords = getFilteredWordsByView('all').length;
+            const favoriteCount = getFavoriteCount();
+            const displayCount = displayWords.length;
+            document.getElementById('stats').innerHTML = `📊 ${favoriteCount}⭐ / ${totalWords}词`;
+            
+            // 显示/隐藏清除搜索按钮
+            const clearBtn = document.getElementById('clearBtn');
+            if (searchText.trim() !== '') {
+                clearBtn.style.display = 'inline-block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            
+            // 更新标签激活状态
+            document.querySelectorAll('.tab')[0].className = currentView === 'all' ? 'tab active' : 'tab';
+            document.querySelectorAll('.tab')[1].className = currentView === 'favorite' ? 'tab favorite active' : 'tab favorite';
+            
+            if (displayWords.length === 0) {
+                let emptyMsg = '';
+                if (searchText) {
+                    emptyMsg = '🔍 没有找到匹配的单词';
+                } else if (currentView === 'favorite') {
+                    emptyMsg = '⭐ 收藏夹为空，点击单词上的⭐按钮添加收藏';
+                } else if (currentCategory !== '所有分类') {
+                    emptyMsg = `📁 分类“${currentCategory}”下没有单词`;
+                } else {
+                    emptyMsg = '📚 词库为空';
+                }
+                
+                wordList.innerHTML = `<div class="empty-message">${emptyMsg}</div>`;
+                return;
+            }
+
+            let html = '';
+            displayWords.forEach(word => {
+                const isExpanded = expandedWord === word.term;
+                const isFavorite = word.favorite;
+                
+                html += `
+                    <div class="word-item">
+                        <div class="word-header" onclick="toggleExpand('${word.term.replace(/'/g, "\\'")}')">
+                            <div class="word-term">
+                                <span class="term-main">${word.term}</span>
+                                <span class="term-translation">${word.translation}</span>
+                            </div>
+                            <div class="word-meta">
+                                <span class="category-tag">${word.category}</span>
+                                <span class="expand-icon">${isExpanded ? '▼' : '▶'}</span>
+                            </div>
+                        </div>
+                        
+                        ${isExpanded ? `
+                            <div class="word-detail">
+                                <div class="explanation-box">
+                                    <div class="explanation-label">📖 解释</div>
+                                    <div class="explanation-text">${word.explanation}</div>
+                                </div>
+                                <div class="word-actions">
+                                    <button class="action-btn ${isFavorite ? 'favorite' : ''}" 
+                                            onclick="toggleFavorite('${word.term.replace(/'/g, "\\'")}', event)">
+                                        ${isFavorite ? '⭐ 已收藏' : '☆ 收藏'}
+                                    </button>
+                                    <button class="action-btn" onclick="copyTerm('${word.term}', event)">
+                                        📋 复制
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            wordList.innerHTML = html;
+        }
+
+        // 更新所有视图
+        function updateView() {
+            renderCategories();
+            renderWords();
+        }
+
+        // ==================== 交互函数 ====================
+        
+        // 选择分类
+        function selectCategory(category) {
+            currentCategory = category;
+            expandedWord = null;  // 切换分类时收起所有展开的词
+            updateView();
+        }
+
+        // 筛选收藏
+        function filterByFavorite(showFavorite) {
+            currentView = showFavorite ? 'favorite' : 'all';
+            // 如果当前分类在收藏视图下没有单词，自动切换到所有分类
+            if (currentView === 'favorite') {
+                const hasWordsInCategory = words.some(w => w.favorite && (currentCategory === '所有分类' || w.category === currentCategory));
+                if (!hasWordsInCategory) {
+                    currentCategory = '所有分类';
+                }
+            }
+            expandedWord = null;
+            updateView();
+        }
+
+        // 搜索处理
+        function handleSearch() {
+            searchText = document.getElementById('searchInput').value;
+            expandedWord = null;  // 搜索时收起所有
+            updateView();
+        }
+
+        // 清除搜索
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchText = '';
+            expandedWord = null;
+            updateView();
+        }
+
+        // 展开/收起单词
+        function toggleExpand(term) {
+            if (expandedWord === term) {
+                expandedWord = null;  // 收起
+            } else {
+                expandedWord = term;  // 展开
+            }
+            renderWords();  // 只重新渲染单词列表
+        }
+
+        // 切换收藏状态
+        function toggleFavorite(term, event) {
+            event.stopPropagation();  // 阻止事件冒泡，避免触发展开/收起
+            
+            const word = words.find(w => w.term === term);
+            if (word) {
+                word.favorite = !word.favorite;
+                
+                // 如果当前在收藏夹视图，且单词取消收藏，需要刷新
+                if (currentView === 'favorite' && !word.favorite) {
+                    // 如果当前分类下没有收藏的词了，可能需要调整
+                    const hasFavoriteInCategory = words.some(w => 
+                        w.favorite && (currentCategory === '所有分类' || w.category === currentCategory)
+                    );
+                    if (!hasFavoriteInCategory) {
+                        currentCategory = '所有分类';
+                    }
+                    if (expandedWord === term) expandedWord = null;
+                }
+                
+                updateView();
+                saveToLocalStorage();
+            }
+        }
+
+        // 复制术语
+        function copyTerm(term, event) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(term).then(() => {
+                alert('✅ 已复制：' + term);
+            });
+        }
+
+        // ==================== 数据持久化 ====================
+        function saveToLocalStorage() {
+            const favoriteStatus = words.map(w => ({term: w.term, favorite: w.favorite}));
+            localStorage.setItem('vocabFavorites', JSON.stringify(favoriteStatus));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('vocabFavorites');
+            if (saved) {
+                try {
+                    const favorites = JSON.parse(saved);
+                    favorites.forEach(f => {
+                        const word = words.find(w => w.term === f.term);
+                        if (word) word.favorite = f.favorite;
+                    });
+                } catch (e) {
+                    console.error('加载收藏数据失败', e);
+                }
+            }
+        }
+
+        // ==================== 初始化 ====================
+        function init() {
+            loadFromLocalStorage();
+            updateView();
+        }
+
+        // 启动
+        init();
+    </script>
+</body>
+</html>
