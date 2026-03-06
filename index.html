@@ -1541,43 +1541,68 @@
 
         // ==================== 渲染函数 ====================
         
-        // 渲染左侧分类列表
-        function renderCategories() {
-            const categories = getUniqueCategories();
-            const categoryList = document.getElementById('categoryList');
-            
-            let html = '<div class="category-header">📌 分类</div>';
-            
-            categories.forEach(cat => {
-                const count = getCategoryCount(cat);
-                // 如果数量为0且不是"所有分类"，不显示
-                if (count === 0 && cat !== '所有分类') return;
-                
-                let icon = '📁';
-                if (cat === '所有分类') icon = '📋';
-                else if (cat.includes('网络')) icon = '🌐';
-                else if (cat.includes('数据')) icon = '🗄️';
-                else if (cat.includes('设计')) icon = '🎨';
-                else if (cat.includes('面向对象')) icon = '🔷';
-                else if (cat.includes('操作')) icon = '⚙️';
-                else if (cat.includes('开发')) icon = '🛠️';
-                
-                const isActive = (currentCategory === cat);
-                
-                html += `
-                    <div class="category-item ${isActive ? 'active' : ''}" 
-                         onclick="selectCategory('${cat.replace(/'/g, "\\'")}')">
-                        <span class="category-name">
-                            <span class="category-icon">${icon}</span>
-                            ${cat}
-                        </span>
-                        <span class="category-count">${count}</span>
-                    </div>
-                `;
-            });
-            
-            categoryList.innerHTML = html;
-        }
+// 渲染左侧分类列表
+function renderCategories() {
+    const categories = getUniqueCategories();
+    const categoryList = document.getElementById('categoryList');
+    
+    let html = '<div class="category-header">📌 分类</div>';
+    
+    // 先把"所有分类"单独处理
+    const allCategory = '所有分类';
+    const allCount = getCategoryCount(allCategory);
+    
+    html += `
+        <div class="category-item ${currentCategory === allCategory ? 'active' : ''}" 
+             onclick="selectCategory('${allCategory.replace(/'/g, "\\'")}')">
+            <span class="category-name">
+                <span class="category-icon">📋</span>
+                ${allCategory}
+            </span>
+            <span class="category-count">${allCount}</span>
+        </div>
+    `;
+    
+    // 获取其他分类并计算数量
+    let otherCategories = categories.filter(cat => cat !== '所有分类');
+    
+    // 为每个分类计算单词数量
+    const categoriesWithCount = otherCategories.map(cat => ({
+        name: cat,
+        count: getCategoryCount(cat)
+    }));
+    
+    // 按数量从大到小排序
+    categoriesWithCount.sort((a, b) => b.count - a.count);
+    
+    // 渲染排序后的分类（只显示数量>0的）
+    categoriesWithCount.forEach(cat => {
+        if (cat.count === 0) return;  // 不显示数量为0的分类
+        
+        let icon = '📁';
+        if (cat.name.includes('网络')) icon = '🌐';
+        else if (cat.name.includes('数据')) icon = '🗄️';
+        else if (cat.name.includes('设计')) icon = '🎨';
+        else if (cat.name.includes('面向对象')) icon = '🔷';
+        else if (cat.name.includes('操作')) icon = '⚙️';
+        else if (cat.name.includes('开发')) icon = '🛠️';
+        
+        const isActive = (currentCategory === cat.name);
+        
+        html += `
+            <div class="category-item ${isActive ? 'active' : ''}" 
+                 onclick="selectCategory('${cat.name.replace(/'/g, "\\'")}')">
+                <span class="category-name">
+                    <span class="category-icon">${icon}</span>
+                    ${cat.name}
+                </span>
+                <span class="category-count">${cat.count}</span>
+            </div>
+        `;
+    });
+    
+    categoryList.innerHTML = html;
+}
 
         // 渲染右侧单词列表
         function renderWords() {
@@ -1780,4 +1805,5 @@
 </body>
 
 </html>
+
 
